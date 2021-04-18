@@ -13,19 +13,16 @@ public class Router {
 	private ArrayList<Integer> neighborRouterIDs; // Contains both "UP" and "DOWN" state routers
 	private Boolean state; // True represents "UP" state and false is for "DOWN" state
 	private Map<Integer, IPAddress> gatewayIDtoIP;
+	private final double ROUTER_UP_PROBABILITY = 0.8;
 
 	public Router() {
 		interfaceAddresses = new ArrayList<>();
 		routingTable = new ArrayList<>();
 		neighborRouterIDs = new ArrayList<>();
 
-		/*
-		  80% Probability that the router is up
-		 */
-		Random random = new Random();
-		double p = random.nextDouble();
-		if(p < 0.80) state = true;
-		else state = false;
+		// 80% Probability that the router is up
+		double p = new Random().nextDouble();
+		state = p <= ROUTER_UP_PROBABILITY;
 
 		numberOfInterfaces = 0;
 	}
@@ -37,34 +34,30 @@ public class Router {
 		this.gatewayIDtoIP = gatewayIDtoIP;
 		routingTable = new ArrayList<>();
 
-		/*
-		  80% Probability that the router is up
-		 */
-		Random random = new Random();
-		double p = random.nextDouble();
-		if(p < 0.80) state = true;
-		else state = false;
+		// 80% Probability that the router is up
+		double p = new Random().nextDouble();
+		state = p <= ROUTER_UP_PROBABILITY;
 
 		numberOfInterfaces = interfaceAddresses.size();
 	}
 
 	@Override
 	public String toString() {
-		String string = "";
-		string += "Router ID: " + routerId + "\n" + "Interfaces: \n";
+		StringBuilder string = new StringBuilder();
+		string.append("Router ID: ").append(routerId).append("\n").append("Interfaces: \n");
 		for (int i = 0; i < numberOfInterfaces; i++) {
-			string += interfaceAddresses.get(i).getString() + "\t";
+			string.append(interfaceAddresses.get(i).getString()).append("\t");
 		}
-		string += "\n" + "Neighbors: \n";
-		for(int i = 0; i < neighborRouterIDs.size(); i++) {
-			string += neighborRouterIDs.get(i) + "\t";
+		string.append("\n" + "Neighbors: \n");
+		for (Integer neighborRouterID : neighborRouterIDs) {
+			string.append(neighborRouterID).append("\t");
 		}
-		return string;
+		return string.toString();
 	}
 
 	/**
-	 * Initialize the distance(hop count) for each router.
-	 * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFINITY;
+	 * Initialize the distance (hop count) for each router.
+	 * For itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFINITY;
 	 */
 	public void initiateRoutingTable() {
 
@@ -157,14 +150,14 @@ public class Router {
 	}
 
 	public String strRoutingTable() {
-		String string = "Router" + routerId + "\n";
-		string += "DestID Distance NextHop\n";
+		StringBuilder string = new StringBuilder("Router" + routerId + "\n");
+		string.append("DestID Distance NextHop\n");
 		for (RoutingTableEntry routingTableEntry : routingTable) {
-			string += routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId() + "\n";
+			string.append(routingTableEntry.getRouterId()).append(" ").append(routingTableEntry.getDistance()).append(" ").append(routingTableEntry.getGatewayRouterId()).append("\n");
 		}
 
-		string += "-----------------------\n";
-		return string;
+		string.append("-----------------------\n");
+		return string.toString();
 	}
 
 }
