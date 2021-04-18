@@ -1,7 +1,7 @@
 package com.company;
 
+// Work needed
 public class ServerThread implements Runnable {
-
 	NetworkUtility networkUtility;
 	EndDevice endDevice;
 
@@ -15,8 +15,8 @@ public class ServerThread implements Runnable {
 
 	@Override
 	public void run() {
-		/**
-		 * Synchronize actions with client.
+		/*
+		  Synchronize actions with client.
 		 */
         
         /*
@@ -43,13 +43,13 @@ public class ServerThread implements Runnable {
 
             3(a) If, while forwarding, any gateway x, found from routingTable of router r is in down state[x.state==FALSE]
                     (i) Drop packet
-                    (ii) Update the entry with distance Constants.INFTY
+                    (ii) Update the entry with distance Constants.INFINITY
                     (iii) Block NetworkLayerServer.stateChanger.t
                     (iv) Apply DVR starting from router r.
                     (v) Resume NetworkLayerServer.stateChanger.t
 
             3(b) If, while forwarding, a router x receives the packet from router y,
-                    but routingTableEntry shows Constants.INFTY distance from x to y,
+                    but routingTableEntry shows Constants.INFINITY distance from x to y,
                     (i) Update the entry with distance 1
                     (ii) Block NetworkLayerServer.stateChanger.t
                     (iii) Apply DVR starting from router x.

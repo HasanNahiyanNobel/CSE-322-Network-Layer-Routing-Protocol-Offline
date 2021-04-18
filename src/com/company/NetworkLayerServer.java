@@ -19,7 +19,7 @@ public class NetworkLayerServer {
 	static Map<IPAddress, EndDevice> endDeviceMap = new HashMap<>();
 	static ArrayList<EndDevice> endDevices = new ArrayList<>();
 	static Map<Integer, Integer> deviceIDtoRouterID = new HashMap<>();
-	static Map<IPAddress, Integer> interfacetoRouterID = new HashMap<>();
+	static Map<IPAddress, Integer> interfaceToRouterID = new HashMap<>();
 	static Map<Integer, Router> routerMap = new HashMap<>();
 
 	public static void main(String[] args) {
@@ -109,7 +109,7 @@ public class NetworkLayerServer {
 				ip = new IPAddress(gateway.getBytes()[0] + "." + gateway.getBytes()[1] + "." + gateway.getBytes()[2] + "." + (value+2));
 				value++;
 				clientInterfaces.put(key, value);
-				deviceIDtoRouterID.put(endDevices.size(), interfacetoRouterID.get(key));
+				deviceIDtoRouterID.put(endDevices.size(), interfaceToRouterID.get(key));
 				break;
 			}
 			i++;
@@ -127,7 +127,7 @@ public class NetworkLayerServer {
 		}
 	}
 
-	public static String strrouters() {
+	public static String strRouters () {
 		String string = "";
 		for (int i = 0; i < routers.size(); i++) {
 			string += "\n------------------\n" + routers.get(i).strRoutingTable();
@@ -151,7 +151,7 @@ public class NetworkLayerServer {
 				inputFile.nextLine();
 				int routerId;
 				ArrayList<Integer> neighborRouters = new ArrayList<>();
-				ArrayList<IPAddress> interfaceAddrs = new ArrayList<>();
+				ArrayList<IPAddress> interfaceAddresses = new ArrayList<>();
 				Map<Integer, IPAddress> interfaceIDtoIP = new HashMap<>();
 
 				routerId = inputFile.nextInt();
@@ -166,8 +166,8 @@ public class NetworkLayerServer {
 				for(int i = 0; i < count; i++) {
 					String string = inputFile.nextLine();
 					IPAddress ipAddress = new IPAddress(string);
-					interfaceAddrs.add(ipAddress);
-					interfacetoRouterID.put(ipAddress, routerId);
+					interfaceAddresses.add(ipAddress);
+					interfaceToRouterID.put(ipAddress, routerId);
 
 					/**
 					 * First interface is always client interface
@@ -180,7 +180,7 @@ public class NetworkLayerServer {
 						interfaceIDtoIP.put(neighborRouters.get(i - 1), ipAddress);
 					}
 				}
-				Router router = new Router(routerId, neighborRouters, interfaceAddrs, interfaceIDtoIP);
+				Router router = new Router(routerId, neighborRouters, interfaceAddresses, interfaceIDtoIP);
 				routers.add(router);
 				routerMap.put(routerId, router);
 			}

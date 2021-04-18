@@ -9,14 +9,14 @@ public class Packet implements Serializable {
 	private String specialMessage;  //ex: "SHOW_ROUTE" request
 	private IPAddress destinationIP;
 	private IPAddress sourceIP;
-	int hopcount;
+	int hopCount;
 
 	public Packet(String message, String specialMessage, IPAddress sourceIP, IPAddress destinationIP) {
 		this.message = message;
 		this.specialMessage = specialMessage;
 		this.sourceIP = sourceIP;
 		this.destinationIP = destinationIP;
-		hopcount = 0;
+		hopCount = 0;
 	}
 
 	public IPAddress getSourceIP() {

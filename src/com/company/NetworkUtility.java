@@ -55,9 +55,7 @@ public class NetworkUtility {
 			object = objectInputStream.readObject();
 		} catch (SocketTimeoutException e) {
 			return "Timed out haha";
-		}catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return object;
