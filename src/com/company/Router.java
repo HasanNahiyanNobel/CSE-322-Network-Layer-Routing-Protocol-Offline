@@ -1,24 +1,26 @@
-package com.company;//Work needed
+package com.company;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 
+// Work needed
 public class Router {
 	private int routerId;
 	private int numberOfInterfaces;
-	private ArrayList<IPAddress> interfaceAddresses;//list of IP address of all interfaces of the router
-	private ArrayList<RoutingTableEntry> routingTable;//used to implement DVR
-	private ArrayList<Integer> neighborRouterIDs;//Contains both "UP" and "DOWN" state routers
-	private Boolean state;//true represents "UP" state and false is for "DOWN" state
+	private ArrayList<IPAddress> interfaceAddresses; // List of IP address of all interfaces of the router
+	private ArrayList<RoutingTableEntry> routingTable; // Used to implement DVR
+	private ArrayList<Integer> neighborRouterIDs; // Contains both "UP" and "DOWN" state routers
+	private Boolean state; // True represents "UP" state and false is for "DOWN" state
 	private Map<Integer, IPAddress> gatewayIDtoIP;
+
 	public Router() {
 		interfaceAddresses = new ArrayList<>();
 		routingTable = new ArrayList<>();
 		neighborRouterIDs = new ArrayList<>();
 
-		/**
-		 * 80% Probability that the router is up
+		/*
+		  80% Probability that the router is up
 		 */
 		Random random = new Random();
 		double p = random.nextDouble();
@@ -35,10 +37,8 @@ public class Router {
 		this.gatewayIDtoIP = gatewayIDtoIP;
 		routingTable = new ArrayList<>();
 
-
-
-		/**
-		 * 80% Probability that the router is up
+		/*
+		  80% Probability that the router is up
 		 */
 		Random random = new Random();
 		double p = random.nextDouble();
@@ -62,14 +62,11 @@ public class Router {
 		return string;
 	}
 
-
-
 	/**
 	 * Initialize the distance(hop count) for each router.
-	 * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFTY;
+	 * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFINITY;
 	 */
 	public void initiateRoutingTable() {
-
 
 	}
 
@@ -88,7 +85,7 @@ public class Router {
 		return false;
 	}
 
-	public boolean sfupdateRoutingTable(Router neighbor) {
+	public boolean sfUpdateRoutingTable (Router neighbor) {
 		return false;
 	}
 
@@ -152,15 +149,16 @@ public class Router {
 
 	public void printRoutingTable() {
 		System.out.println("Router " + routerId);
-		System.out.println("DestID Distance Nexthop");
+		System.out.println("DestID Distance NextHop");
 		for (RoutingTableEntry routingTableEntry : routingTable) {
 			System.out.println(routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId());
 		}
 		System.out.println("-----------------------");
 	}
+
 	public String strRoutingTable() {
 		String string = "Router" + routerId + "\n";
-		string += "DestID Distance Nexthop\n";
+		string += "DestID Distance NextHop\n";
 		for (RoutingTableEntry routingTableEntry : routingTable) {
 			string += routingTableEntry.getRouterId() + " " + routingTableEntry.getDistance() + " " + routingTableEntry.getGatewayRouterId() + "\n";
 		}

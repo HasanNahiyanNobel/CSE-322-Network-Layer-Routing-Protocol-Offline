@@ -1,10 +1,11 @@
-package com.company;//Done!
+package com.company;
 import java.util.Random;
 
+//Done!
 public class RouterStateChanger implements Runnable {
 
 	public Thread thread = null;
-	public static boolean islocked = false;
+	public static boolean isLocked = false;
 	public static Boolean msg = true;
 
 	public RouterStateChanger() {
@@ -16,7 +17,7 @@ public class RouterStateChanger implements Runnable {
 	public void run() {
 		Random random = new Random(System.currentTimeMillis());
 		while (true) {
-			if (islocked) {
+			if (isLocked) {
 				try {
 					synchronized (msg) {
 						msg.wait();
@@ -38,13 +39,12 @@ public class RouterStateChanger implements Runnable {
 	}
 
 	public void revertRandomRouter() {
-		/**
-		 * Randomly select a router and revert its state
+		/*
+		  Randomly select a router and revert its state
 		 */
 		Random random = new Random(System.currentTimeMillis());
 		int id = random.nextInt(NetworkLayerServer.routers.size());
 		NetworkLayerServer.routers.get(id).revertState();
 		System.out.println("State Changed; Router ID: "+NetworkLayerServer.routers.get(id).getRouterId());
-
 	}
 }

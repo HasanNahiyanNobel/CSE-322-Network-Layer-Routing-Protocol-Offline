@@ -15,7 +15,6 @@ public class IPAddress implements Serializable {
 		for (int i = 0; i < 4; i++) {
 			bytes[i] = Short.parseShort(temp[i]);
 		}
-
 	}
 
 	public Short[] getBytes()
