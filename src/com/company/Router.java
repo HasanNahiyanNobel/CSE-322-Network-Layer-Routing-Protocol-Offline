@@ -14,24 +14,24 @@ public class Router {
 	private int numberOfInterfaces;
 	private ArrayList<IPAddress> interfaceAddresses; // List of IP address of all interfaces of the router
 	private ArrayList<RoutingTableEntry> routingTable; // Used to implement DVR
-	private ArrayList<Integer> neighbourRouterIDs; // Contains both "UP" and "DOWN" state routers
-	private Boolean state; // True represents "UP" state and false is for "DOWN" state
+	private ArrayList<Integer> neighbourRouterIDs; // Contains both "UP" and "DOWN" isStateUp routers
+	private Boolean isStateUp; // True represents "UP" isStateUp and false is for "DOWN" isStateUp
 	private Map<Integer, IPAddress> gatewayIDtoIP;
 	private final double ROUTER_UP_PROBABILITY = 0.8;
 
-	public Router() {
+	public Router () {
 		interfaceAddresses = new ArrayList<>();
 		routingTable = new ArrayList<>();
 		neighbourRouterIDs = new ArrayList<>();
 
 		// 80% Probability that the router is up
 		double p = new Random().nextDouble();
-		state = p <= ROUTER_UP_PROBABILITY;
+		isStateUp = p <= ROUTER_UP_PROBABILITY;
 
 		numberOfInterfaces = 0;
 	}
 
-	public Router(int routerId, ArrayList<Integer> neighbourRouters, ArrayList<IPAddress> interfaceAddresses, Map<Integer, IPAddress> gatewayIDtoIP) {
+	public Router (int routerId, ArrayList<Integer> neighbourRouters, ArrayList<IPAddress> interfaceAddresses, Map<Integer, IPAddress> gatewayIDtoIP) {
 		this.routerId = routerId;
 		this.interfaceAddresses = interfaceAddresses;
 		this.neighbourRouterIDs = neighbourRouters;
@@ -40,13 +40,13 @@ public class Router {
 
 		// 80% Probability that the router is up
 		double p = new Random().nextDouble();
-		state = p <= ROUTER_UP_PROBABILITY;
+		isStateUp = p <= ROUTER_UP_PROBABILITY;
 
 		numberOfInterfaces = interfaceAddresses.size();
 	}
 
 	@Override
-	public String toString() {
+	public String toString () {
 		StringBuilder string = new StringBuilder();
 		string.append("Router ID: ").append(routerId).append("\n").append("Interfaces: \n");
 		for (int i = 0; i < numberOfInterfaces; i++) {
@@ -61,9 +61,9 @@ public class Router {
 
 	/**
 	 * Initialize the distance (hop count) for each router.
-	 * For itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFINITY;
+	 * For itself, distance=0; for any connected router with isStateUp=true, distance=1; otherwise distance=Constants.INFINITY;
 	 */
-	public void initiateRoutingTable() {
+	public void initiateRoutingTable () {
 		for (int aRoutersID=1; aRoutersID<=routers.size(); aRoutersID++) {
 
 			double aRoutersDistance;
@@ -73,7 +73,7 @@ public class Router {
 				aRoutersDistance = 0; // Distance of this router
 				aRoutersGatewayID = aRoutersID; // ID of its own
 			}
-			else if (neighbourRouterIDs.contains(aRoutersID) && routers.get(aRoutersID-1).getState()) {
+			else if (neighbourRouterIDs.contains(aRoutersID) && routers.get(aRoutersID-1).getIsStateUp()) {
 				aRoutersDistance = 1; // Distance of a neighbour router which is up
 				aRoutersGatewayID = aRoutersID; // ID of the neighbour
 			}
@@ -89,16 +89,38 @@ public class Router {
 	/**
 	 * Delete all the routingTableEntry
 	 */
-	public void clearRoutingTable() {
+	public void clearRoutingTable () {
 
 	}
 
 	/**
-	 * Update the routing table for this router using the entries of Router neighbour
-	 * @param neighbour
+	 * Update the routing table for this router using the entries of its neighbourRouter
+	 * @param neighbourRouter A neighbour of the router
+	 * @return {@code true} if any update has occurred, otherwise {@code false}
 	 */
-	public boolean updateRoutingTable(Router neighbour) {
-		return false;
+	public boolean updateRoutingTable (Router neighbourRouter) {
+		boolean flagHasAnyUpdateOccurred = false;
+		ArrayList<RoutingTableEntry> neighbourRoutingTable = neighbourRouter.getRoutingTable();
+
+		for (int i=1; i<=routingTable.size(); i++) {
+
+			if (i==neighbourRouter.getRouterId()) {
+				// Entry is already updated for neighbour
+				continue;
+			}
+
+			double currentDistance = routingTable.get(i).getDistance();
+			double distanceViaNeighbour = 1 + neighbourRoutingTable.get(i).getDistance(); // +1 for the distance from router to neighbour
+
+			if (currentDistance > distanceViaNeighbour) {
+				routingTable.get(i).setDistance(distanceViaNeighbour);
+				routingTable.get(i).setGatewayRouterId(neighbourRouter.getRouterId());
+				flagHasAnyUpdateOccurred = true;
+			}
+
+		}
+
+		return flagHasAnyUpdateOccurred;
 	}
 
 	public boolean sfUpdateRoutingTable (Router neighbour) {
@@ -106,27 +128,27 @@ public class Router {
 	}
 
 	/**
-	 * If the state was up, down it; if state was down, up it
+	 * If the isStateUp was up, down it; if isStateUp was down, up it
 	 */
-	public void revertState() {
-		state = !state;
-		if(state) { initiateRoutingTable(); }
+	public void revertState () {
+		isStateUp = !isStateUp;
+		if(isStateUp) { initiateRoutingTable(); }
 		else { clearRoutingTable(); }
 	}
 
-	public int getRouterId() {
+	public int getRouterId () {
 		return routerId;
 	}
 
-	public void setRouterId(int routerId) {
+	public void setRouterId (int routerId) {
 		this.routerId = routerId;
 	}
 
-	public int getNumberOfInterfaces() {
+	public int getNumberOfInterfaces () {
 		return numberOfInterfaces;
 	}
 
-	public void setNumberOfInterfaces(int numberOfInterfaces) {
+	public void setNumberOfInterfaces (int numberOfInterfaces) {
 		this.numberOfInterfaces = numberOfInterfaces;
 	}
 
@@ -153,12 +175,12 @@ public class Router {
 
 	public void setNeighbourRouterIDs (ArrayList<Integer> neighbourRouterIDs) { this.neighbourRouterIDs = neighbourRouterIDs; }
 
-	public Boolean getState() {
-		return state;
+	public Boolean getIsStateUp () {
+		return isStateUp;
 	}
 
-	public void setState(Boolean state) {
-		this.state = state;
+	public void setIsStateUp (Boolean isStateUp) {
+		this.isStateUp = isStateUp;
 	}
 
 	public Map<Integer, IPAddress> getGatewayIDtoIP() { return gatewayIDtoIP; }

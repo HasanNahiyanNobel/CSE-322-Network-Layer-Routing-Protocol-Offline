@@ -9,6 +9,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.company.Constants.INFINITY;
+import static java.lang.System.exit;
+
 //Work needed
 public class NetworkLayerServer {
 
@@ -22,7 +25,7 @@ public class NetworkLayerServer {
 	static Map<IPAddress, Integer> interfaceToRouterID = new HashMap<>();
 	static Map<Integer, Router> routerMap = new HashMap<>();
 
-	public static void main(String[] args) {
+	public static void main (String[] args) {
 
 		//Task: Maintain an active client list
 
@@ -41,7 +44,7 @@ public class NetworkLayerServer {
 
 		initRoutingTables(); //Initialize routing tables for all routers
 
-		//DVR(1); //Update routing table using distance vector routing until convergence
+		DVR(1); //Update routing table using distance vector routing until convergence
 		simpleDVR(1);
 		stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
 
@@ -60,23 +63,21 @@ public class NetworkLayerServer {
 		}
 	}
 
-	public static void initRoutingTables() {
+	public static void initRoutingTables () {
 		for (Router router : routers) {
 			router.initiateRoutingTable();
 		}
 	}
 
-	public static synchronized void DVR(int startingRouterId) {
+	public static synchronized void DVR (int startingRouterId) {
 		/**
 		 * pseudocode
 		 */
 
         /*
-        while(convergence)
-        {
+        while(convergence) {
             //convergence means no change in any routingTable before and after executing the following for loop
-            for each router r <starting from the router with routerId = startingRouterId, in any order>
-            {
+            for each router r <starting from the router with routerId = startingRouterId, in any order> {
                 1. T <- getRoutingTable of the router r
                 2. N <- find routers which are the active neighbors of the current router r
                 3. Update routingTable of each router t in N using the
@@ -84,14 +85,46 @@ public class NetworkLayerServer {
             }
         }
         */
+
+		while (true) {
+			boolean atLeastOneUpdateOccurred = false;
+
+			for (Router router : routers) {
+
+				ArrayList<RoutingTableEntry> routingTable = router.getRoutingTable();
+
+				for (RoutingTableEntry routingTableEntry : routingTable) {
+
+					double neighbourDistance = routingTableEntry.getDistance();
+					if (neighbourDistance==INFINITY || neighbourDistance==0) {
+						// Not a neighbour, or the router itself; got to do nothing
+						continue;
+					}
+
+					int neighbourID = routingTableEntry.getRouterId();
+					if (!routers.get(neighbourID).getIsStateUp()) {
+						// TODO: Detach the link
+						continue;
+					}
+
+					Router neighbourRouter = routers.get(neighbourID);
+					atLeastOneUpdateOccurred = neighbourRouter.updateRoutingTable(router);
+				}
+			}
+
+			if (!atLeastOneUpdateOccurred) {
+				break;
+			}
+		}
+
+		exit(0);
 	}
 
-	public static synchronized void simpleDVR(int startingRouterId) {
-
+	public static synchronized void simpleDVR (int startingRouterId) {
 
 	}
 
-	public static EndDevice getClientDeviceSetup() {
+	public static EndDevice getClientDeviceSetup () {
 		Random random = new Random(System.currentTimeMillis());
 		int r = Math.abs(random.nextInt(clientInterfaces.size()));
 
@@ -121,7 +154,7 @@ public class NetworkLayerServer {
 		return device;
 	}
 
-	public static void printRouters() {
+	public static void printRouters () {
 		for(int i = 0; i < routers.size(); i++) {
 			System.out.println("------------------\n" + routers.get(i));
 		}
@@ -136,7 +169,7 @@ public class NetworkLayerServer {
 		return string;
 	}
 
-	public static void readTopology() {
+	public static void readTopology () {
 		Scanner inputFile = null;
 		try {
 			inputFile = new Scanner(new File("Topology.txt"));
