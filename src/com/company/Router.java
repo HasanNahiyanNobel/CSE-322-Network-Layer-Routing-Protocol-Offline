@@ -64,7 +64,7 @@ public class Router {
 	 * For itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFINITY;
 	 */
 	public void initiateRoutingTable() {
-		for (int aRoutersID=0; aRoutersID<=routers.size(); aRoutersID++) {
+		for (int aRoutersID=1; aRoutersID<=routers.size(); aRoutersID++) {
 
 			double aRoutersDistance;
 			int aRoutersGatewayID;
