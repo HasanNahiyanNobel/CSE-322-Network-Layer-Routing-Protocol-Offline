@@ -169,9 +169,11 @@ public class Router {
 		System.out.println("Router #" + routerId);
 		System.out.println("DestID\tDistance\tNextHop");
 		for (RoutingTableEntry routingTableEntry : routingTable) {
-			System.out.println(String.format("%02d", routingTableEntry.getRouterId())
-					+ "\t\t" + df.format(routingTableEntry.getDistance())
-					+ "\t\t" + String.format("%02d", routingTableEntry.getGatewayRouterId()));
+			System.out.println(
+					"  " + getFormattedString(String.valueOf(routingTableEntry.getRouterId()), 2) +
+					"\t  " + getFormattedString(String.valueOf(routingTableEntry.getDistance()), 4) +
+					"\t\t  " + getFormattedString(String.valueOf(routingTableEntry.getGatewayRouterId()), 2)
+			);
 		}
 		System.out.println("-----------------------");
 	}
@@ -187,4 +189,16 @@ public class Router {
 		return string.toString();
 	}
 
+	private String getFormattedString (String string, int desiredLengthWithLeadingSpaces) {
+		if (string.length() >= desiredLengthWithLeadingSpaces) {
+			return string;
+		}
+		else {
+			int numberOfLeadingSpaces = desiredLengthWithLeadingSpaces - string.length();
+			StringBuilder formattedString = new StringBuilder();
+			for (int i=0; i<numberOfLeadingSpaces; i++) formattedString.append(" ");
+			formattedString.append(string);
+			return formattedString.toString();
+		}
+	}
 }
