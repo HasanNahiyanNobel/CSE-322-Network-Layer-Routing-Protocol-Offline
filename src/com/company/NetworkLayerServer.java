@@ -102,12 +102,12 @@ public class NetworkLayerServer {
 					}
 
 					int neighbourID = routingTableEntry.getRouterId();
-					if (!routers.get(neighbourID).getIsStateUp()) {
+					if (!routers.get(neighbourID-1).getIsStateUp()) {
 						// TODO: Detach the link
 						continue;
 					}
 
-					Router neighbourRouter = routers.get(neighbourID);
+					Router neighbourRouter = routers.get(neighbourID-1);
 					atLeastOneUpdateOccurred = neighbourRouter.updateRoutingTable(router);
 				}
 			}

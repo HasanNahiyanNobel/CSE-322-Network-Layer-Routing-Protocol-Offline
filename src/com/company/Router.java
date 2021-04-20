@@ -109,12 +109,12 @@ public class Router {
 				continue;
 			}
 
-			double currentDistance = routingTable.get(i).getDistance();
-			double distanceViaNeighbour = 1 + neighbourRoutingTable.get(i).getDistance(); // +1 for the distance from router to neighbour
+			double currentDistance = routingTable.get(i-1).getDistance();
+			double distanceViaNeighbour = 1 + neighbourRoutingTable.get(i-1).getDistance(); // +1 for the distance from router to neighbour
 
 			if (currentDistance > distanceViaNeighbour) {
-				routingTable.get(i).setDistance(distanceViaNeighbour);
-				routingTable.get(i).setGatewayRouterId(neighbourRouter.getRouterId());
+				routingTable.get(i-1).setDistance(distanceViaNeighbour);
+				routingTable.get(i-1).setGatewayRouterId(neighbourRouter.getRouterId());
 				flagHasAnyUpdateOccurred = true;
 			}
 
