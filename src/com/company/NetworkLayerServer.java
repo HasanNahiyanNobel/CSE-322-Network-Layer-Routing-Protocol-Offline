@@ -1,8 +1,6 @@
 package com.company;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -117,6 +115,21 @@ public class NetworkLayerServer {
 			}
 		}
 
+		try {
+
+			BufferedWriter bw = new BufferedWriter(new FileWriter("log.txt"));
+
+			for (Router router : routers) {
+				//System.out.println(router.getRoutingTableAsString());
+				bw.write(router.getRoutingTableAsString());
+			}
+
+			bw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		exit(0);
 	}
 
@@ -163,7 +176,7 @@ public class NetworkLayerServer {
 	public static String strRouters () {
 		String string = "";
 		for (int i = 0; i < routers.size(); i++) {
-			string += "\n------------------\n" + routers.get(i).strRoutingTable();
+			string += "\n------------------\n" + routers.get(i).getRoutingTableAsString();
 		}
 		string += "\n\n";
 		return string;

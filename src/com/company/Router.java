@@ -1,6 +1,5 @@
 package com.company;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
@@ -152,20 +151,20 @@ public class Router {
 		this.numberOfInterfaces = numberOfInterfaces;
 	}
 
-	public ArrayList<IPAddress> getInterfaceAddresses() {
+	public ArrayList<IPAddress> getInterfaceAddresses () {
 		return interfaceAddresses;
 	}
 
-	public void setInterfaceAddresses(ArrayList<IPAddress> interfaceAddresses) {
+	public void setInterfaceAddresses (ArrayList<IPAddress> interfaceAddresses) {
 		this.interfaceAddresses = interfaceAddresses;
 		numberOfInterfaces = interfaceAddresses.size();
 	}
 
-	public ArrayList<RoutingTableEntry> getRoutingTable() {
+	public ArrayList<RoutingTableEntry> getRoutingTable () {
 		return routingTable;
 	}
 
-	public void addRoutingTableEntry(RoutingTableEntry entry) {
+	public void addRoutingTableEntry (RoutingTableEntry entry) {
 		this.routingTable.add(entry);
 	}
 
@@ -183,34 +182,31 @@ public class Router {
 		this.isStateUp = isStateUp;
 	}
 
-	public Map<Integer, IPAddress> getGatewayIDtoIP() { return gatewayIDtoIP; }
+	public Map<Integer, IPAddress> getGatewayIDtoIP () { return gatewayIDtoIP; }
 
-	public void printRoutingTable() {
-		DecimalFormat df = new DecimalFormat("00.00");
-
-		System.out.println("Router #" + routerId);
-		System.out.println("DestID\tDistance\tNextHop");
-		for (RoutingTableEntry routingTableEntry : routingTable) {
-			System.out.println(
-					"  " + getFormattedString(String.valueOf(routingTableEntry.getRouterId()), 2) +
-					"\t  " + getFormattedString(String.valueOf(routingTableEntry.getDistance()), 4) +
-					"\t\t  " + getFormattedString(String.valueOf(routingTableEntry.getGatewayRouterId()), 2)
-			);
-		}
-		System.out.println("-----------------------");
+	public void printRoutingTable () {
+		System.out.print(getRoutingTableAsString());
 	}
 
-	public String strRoutingTable() {
-		StringBuilder string = new StringBuilder("Router" + routerId + "\n");
-		string.append("DestID Distance NextHop\n");
+	public String getRoutingTableAsString () {
+		StringBuilder string = new StringBuilder("Router #" + routerId + "\n");
+		string.append("DestID\tDistance\tNextHop\n");
 		for (RoutingTableEntry routingTableEntry : routingTable) {
-			string.append(routingTableEntry.getRouterId()).append(" ").append(routingTableEntry.getDistance()).append(" ").append(routingTableEntry.getGatewayRouterId()).append("\n");
+			string.append("  ").append(getFormattedString(String.valueOf(routingTableEntry.getRouterId()), 2))
+					.append("\t  ").append(getFormattedString(String.valueOf(routingTableEntry.getDistance()), 4))
+					.append("\t\t  ").append(getFormattedString(String.valueOf(routingTableEntry.getGatewayRouterId()), 2))
+					.append("\n");
 		}
-
 		string.append("-----------------------\n");
 		return string.toString();
 	}
 
+	/**
+	 * Formats a string with desired number of leading spaces in front of it.
+	 * @param string String to be formatted.
+	 * @param desiredLengthWithLeadingSpaces Desired length of the string <i>with</i> leading spaces.
+	 * @return If the string is larger than {@code desiredLengthWithLeadingSpaces}, then the string itself. Else necessary number of spaces are added as prefix.
+	 */
 	private String getFormattedString (String string, int desiredLengthWithLeadingSpaces) {
 		if (string.length() >= desiredLengthWithLeadingSpaces) {
 			return string;
@@ -218,7 +214,7 @@ public class Router {
 		else {
 			int numberOfLeadingSpaces = desiredLengthWithLeadingSpaces - string.length();
 			StringBuilder formattedString = new StringBuilder();
-			for (int i=0; i<numberOfLeadingSpaces; i++) formattedString.append(" ");
+			formattedString.append(" ".repeat(numberOfLeadingSpaces));
 			formattedString.append(string);
 			return formattedString.toString();
 		}
