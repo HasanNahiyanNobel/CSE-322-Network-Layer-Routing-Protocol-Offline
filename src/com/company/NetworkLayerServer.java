@@ -91,13 +91,16 @@ public class NetworkLayerServer {
 			boolean atLeastOneUpdateOccurred = false;
 
 			for (Router router : routers) {
+				System.out.println("Processing router #" + router.getRouterId()); // TODO: Remove this debug line
 				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
 					double neighbourDistance = routingTableEntry.getDistance();
+					System.out.print("\t\tneighbour #" + routingTableEntry.getRouterId() + "...."); // TODO: Remove this debug line
 					if (neighbourDistance == INFINITY || neighbourDistance == 0) {
 						// Not a neighbour or the router itself; got to do nothing.
+						System.out.println("not updating; cause: " + (neighbourDistance==0 ? "0" : "INFINITY")); // TODO: Remove this debug line
 						continue;
 					}
-
+					System.out.println("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")"); // TODO: Remove this debug line
 					int neighbourID = routingTableEntry.getRouterId();
 					Router neighbourRouter = routers.get(neighbourID - 1);
 					atLeastOneUpdateOccurred = router.updateRoutingTable(neighbourRouter);
@@ -108,7 +111,7 @@ public class NetworkLayerServer {
 			if (!atLeastOneUpdateOccurred) break;
 		}
 
-		System.out.println("Looped for #" + debugIntTemp + " times.");
+		System.out.println("Looped for #" + debugIntTemp + " time(s)."); // TODO: Remove this debug line
 		printRoutersToFile("Log2AfterDVR.txt");
 	}
 
