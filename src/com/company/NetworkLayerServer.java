@@ -104,7 +104,13 @@ public class NetworkLayerServer {
 					System.out.println("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")"); // TODO: Remove this debug line
 					int neighbourID = routingTableEntry.getRouterId();
 					Router neighbourRouter = routers.get(neighbourID - 1);
-					atLeastOneUpdateOccurred = router.updateRoutingTable(neighbourRouter);
+
+					if (!atLeastOneUpdateOccurred) {
+						atLeastOneUpdateOccurred = router.updateRoutingTable(neighbourRouter);
+					}
+					else {
+						router.updateRoutingTable(neighbourRouter);
+					}
 				}
 			}
 
