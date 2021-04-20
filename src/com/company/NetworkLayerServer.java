@@ -7,14 +7,13 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.company.Constants.EPSILON;
-import static com.company.Constants.INFINITY;
-import static java.lang.System.exit;
+import static com.company.Constants.*;
 
 //Work needed
 public class NetworkLayerServer {
 
 	static int clientCount = 0;
+	static int totalNumberOfIterationsInDVR = 0;
 	static ArrayList<Router> routers = new ArrayList<>();
 	static RouterStateChanger stateChanger = null;
 	static Map<IPAddress,Integer> clientInterfaces = new HashMap<>(); //Each map entry represents number of client end devices connected to the interface
@@ -25,6 +24,16 @@ public class NetworkLayerServer {
 	static Map<Integer, Router> routerMap = new HashMap<>();
 
 	public static void main (String[] args) {
+		if (DEBUG_MODE) {
+			// Clear the debug log file
+			try {
+				PrintWriter pw = new PrintWriter(DEBUG_LOG_PATH);
+				pw.write("");
+				pw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		//Task: Maintain an active client list
 
@@ -48,14 +57,12 @@ public class NetworkLayerServer {
 		DVR(1); //Update routing table using distance vector routing until convergence
 		simpleDVR(1);
 
-		stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
-
-		exit(0); // TODO: Remove this halt.
+		stateChanger = new RouterStateChanger(); //Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
 
 		while(true) {
 			try {
 				Socket socket = serverSocket.accept();
-				System.out.println("Client" + (clientCount + 1) + " attempted to connect");
+				System.out.println("Client #" + (clientCount + 1) + " attempted to connect");
 				EndDevice endDevice = getClientDeviceSetup();
 				clientCount++;
 				endDevices.add(endDevice);
@@ -90,19 +97,23 @@ public class NetworkLayerServer {
         */
 
 		while (true) {
+			if (DEBUG_MODE) appendStringToDebugFile("\n\nStarting DVR loop #" + (totalNumberOfIterationsInDVR+1));
 			boolean atLeastOneUpdateOccurred = false;
 
 			for (Router router : routers) {
-				//System.out.println("Processing router #" + router.getRouterId()); // TODO: Remove this debug line
+				if (DEBUG_MODE) appendStringToDebugFile("Processing router #" + router.getRouterId());
 				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
 					double neighbourDistance = routingTableEntry.getDistance();
-					//System.out.print("\t\tneighbour #" + routingTableEntry.getRouterId() + "...."); // TODO: Remove this debug line
+					if (DEBUG_MODE) appendStringToDebugFile("\t\tneighbour #" + routingTableEntry.getRouterId() + "....");
+
 					if ((Math.abs(neighbourDistance-INFINITY)<EPSILON) || neighbourDistance == 0) {
 						// Not a neighbour or the router itself; got to do nothing.
-						//System.out.println("not updating; cause: " + (neighbourDistance==0 ? "0" : "INFINITY")); // TODO: Remove this debug line
+						if (DEBUG_MODE) appendStringToDebugFile("not updating; cause: " + (neighbourDistance==0 ? "same router" : "infinite distance"));
 						continue;
 					}
-					//System.out.println("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")"); // TODO: Remove this debug line
+
+					if (DEBUG_MODE) appendStringToDebugFile("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")");
+
 					int neighbourID = routingTableEntry.getRouterId();
 					Router neighbourRouter = routers.get(neighbourID - 1);
 
@@ -114,6 +125,7 @@ public class NetworkLayerServer {
 					}
 				}
 			}
+			totalNumberOfIterationsInDVR ++;
 			if (!atLeastOneUpdateOccurred) break;
 		}
 		printRoutersToFile("Log2AfterDVR.txt");
@@ -172,6 +184,16 @@ public class NetworkLayerServer {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
 			for (Router router : routers) bw.write(router.getRoutingTableAsString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void appendStringToDebugFile (String string) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(DEBUG_LOG_PATH));
+			bw.append(string);
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
