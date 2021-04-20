@@ -43,10 +43,14 @@ public class NetworkLayerServer {
 
 		initRoutingTables(); //Initialize routing tables for all routers
 
+		printRoutersToFile("Log1BeforeDVR.txt");
+
 		DVR(1); //Update routing table using distance vector routing until convergence
-		exit(0); // TODO: Remove this halt.
 		simpleDVR(1);
+
 		stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
+
+		exit(0); // TODO: Remove this halt.
 
 		while(true) {
 			try {
@@ -85,23 +89,20 @@ public class NetworkLayerServer {
         }
         */
 
-		printRoutersToFile("Log1BeforeDVR.txt");
-		int debugIntTemp = 0;
-
 		while (true) {
 			boolean atLeastOneUpdateOccurred = false;
 
 			for (Router router : routers) {
-				System.out.println("Processing router #" + router.getRouterId()); // TODO: Remove this debug line
+				//System.out.println("Processing router #" + router.getRouterId()); // TODO: Remove this debug line
 				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
 					double neighbourDistance = routingTableEntry.getDistance();
-					System.out.print("\t\tneighbour #" + routingTableEntry.getRouterId() + "...."); // TODO: Remove this debug line
+					//System.out.print("\t\tneighbour #" + routingTableEntry.getRouterId() + "...."); // TODO: Remove this debug line
 					if ((Math.abs(neighbourDistance-INFINITY)<EPSILON) || neighbourDistance == 0) {
 						// Not a neighbour or the router itself; got to do nothing.
-						System.out.println("not updating; cause: " + (neighbourDistance==0 ? "0" : "INFINITY")); // TODO: Remove this debug line
+						//System.out.println("not updating; cause: " + (neighbourDistance==0 ? "0" : "INFINITY")); // TODO: Remove this debug line
 						continue;
 					}
-					System.out.println("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")"); // TODO: Remove this debug line
+					//System.out.println("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")"); // TODO: Remove this debug line
 					int neighbourID = routingTableEntry.getRouterId();
 					Router neighbourRouter = routers.get(neighbourID - 1);
 
@@ -113,12 +114,8 @@ public class NetworkLayerServer {
 					}
 				}
 			}
-
-			debugIntTemp++;
 			if (!atLeastOneUpdateOccurred) break;
 		}
-
-		System.out.println("Looped for #" + debugIntTemp + " time(s)."); // TODO: Remove this debug line
 		printRoutersToFile("Log2AfterDVR.txt");
 	}
 

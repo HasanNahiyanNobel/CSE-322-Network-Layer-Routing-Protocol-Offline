@@ -59,8 +59,12 @@ public class Router {
 	}
 
 	/**
-	 * Initialize the distance (hop count) for each router.
-	 * For itself, distance=0; for any connected router with isStateUp=true, distance=1; otherwise distance=Constants.INFINITY;
+	 * Initializes the <code>distance</code> (hop count) for each router.<br>
+	 * <list>
+	 *     <li>For itself, <code>distance=0</code></li>
+	 *     <li>For any connected router with <code>{@link Router#isStateUp}=true</code>, <code>distance=1</code></li>
+	 *     <li>Otherwise <code>distance={@link Constants#INFINITY}</code></li>
+	 * </list>
 	 */
 	public void initiateRoutingTable () {
 		for (int aRoutersID=1; aRoutersID<=routers.size(); aRoutersID++) {
@@ -86,14 +90,14 @@ public class Router {
 	}
 
 	/**
-	 * Delete all the routingTableEntry
+	 * Deletes all the entries from {@link Router#routingTable}.
 	 */
 	public void clearRoutingTable () {
 
 	}
 
 	/**
-	 * Update the routing table for this router using the entries of its neighbourRouter
+	 * Updates the routing table for this router using the entries of its neighbourRouter.
 	 * @param neighbourRouter A neighbour of the router
 	 * @return {@code true} if any update has occurred, otherwise {@code false}
 	 */
@@ -133,12 +137,12 @@ public class Router {
 	}
 
 	/**
-	 * If the isStateUp was up, down it; if isStateUp was down, up it
+	 * Reverts the boolean value {@link Router#isStateUp}.
 	 */
 	public void revertState () {
 		isStateUp = !isStateUp;
-		if(isStateUp) { initiateRoutingTable(); }
-		else { clearRoutingTable(); }
+		if (isStateUp) initiateRoutingTable();
+		else clearRoutingTable();
 	}
 
 	public int getRouterId () {
@@ -209,9 +213,11 @@ public class Router {
 
 	/**
 	 * Formats a string with desired number of leading spaces in front of it.
+	 *
 	 * @param string String to be formatted.
 	 * @param desiredLengthWithLeadingSpaces Desired length of the string <i>with</i> leading spaces.
-	 * @return If the string is larger than {@code desiredLengthWithLeadingSpaces}, then the string itself. Else necessary number of spaces are added as prefix.
+	 *
+	 * @return If the string is larger than <code>desiredLengthWithLeadingSpaces</code>, then the string itself. Else necessary number of spaces are added as prefix.
 	 */
 	private String getFormattedString (String string, int desiredLengthWithLeadingSpaces) {
 		if (string.length() >= desiredLengthWithLeadingSpaces) {
