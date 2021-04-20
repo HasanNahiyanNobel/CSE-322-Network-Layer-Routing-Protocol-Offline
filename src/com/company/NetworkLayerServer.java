@@ -1,6 +1,8 @@
 package com.company;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -43,6 +45,7 @@ public class NetworkLayerServer {
 		initRoutingTables(); //Initialize routing tables for all routers
 
 		DVR(1); //Update routing table using distance vector routing until convergence
+		exit(0);
 		simpleDVR(1);
 		stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
 
@@ -84,7 +87,7 @@ public class NetworkLayerServer {
         }
         */
 
-		while (true) {
+		/*while (true) {
 			boolean atLeastOneUpdateOccurred = false;
 
 			for (Router router : routers) {
@@ -101,7 +104,7 @@ public class NetworkLayerServer {
 
 					int neighbourID = routingTableEntry.getRouterId();
 					if (!routers.get(neighbourID-1).getIsStateUp()) {
-						// TODO: Detach the link
+						// TODO: State not up, detach the link
 						continue;
 					}
 
@@ -113,24 +116,41 @@ public class NetworkLayerServer {
 			if (!atLeastOneUpdateOccurred) {
 				break;
 			}
+		}*/
+
+		boolean atLeastOneUpdateOccurred = false;
+
+		for (Router router : routers) {
+			for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
+				double neighbourDistance = routingTableEntry.getDistance();
+				if (neighbourDistance==INFINITY || neighbourDistance==0) {
+					// Not a neighbour or the router itself; got to do nothing.
+					continue;
+				}
+
+				int neighbourID = routingTableEntry.getRouterId();
+				Router neighbourRouter = routers.get(neighbourID-1);
+				/*if (!neighbourRouter.getIsStateUp()) {
+					// TODO: State not up, detach the link
+					continue;
+				}*/
+
+				atLeastOneUpdateOccurred = router.updateRoutingTable(neighbourRouter);
+			}
 		}
 
-		try {
+		if (!atLeastOneUpdateOccurred) DVR(1);
+		else return;
 
-			BufferedWriter bw = new BufferedWriter(new FileWriter("log.txt"));
-
-			for (Router router : routers) {
-				//System.out.println(router.getRoutingTableAsString());
-				bw.write(router.getRoutingTableAsString());
-			}
-
+		/*try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter("Log.txt"));
+			for (Router router : routers) bw.write(router.getRoutingTableAsString());
 			bw.close();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		exit(0);
+		exit(0);*/
 	}
 
 	public static synchronized void simpleDVR (int startingRouterId) {

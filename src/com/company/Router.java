@@ -98,13 +98,19 @@ public class Router {
 	 * @return {@code true} if any update has occurred, otherwise {@code false}
 	 */
 	public boolean updateRoutingTable (Router neighbourRouter) {
+		if (!neighbourRouter.getIsStateUp()) {
+			// Neighbour is down, set distance to infinity.
+			routingTable.get(neighbourRouter.getRouterId()-1).setDistance(INFINITY);
+			return true;
+		}
+
 		boolean flagHasAnyUpdateOccurred = false;
 		ArrayList<RoutingTableEntry> neighbourRoutingTable = neighbourRouter.getRoutingTable();
 
 		for (int i=1; i<=routingTable.size(); i++) {
 
-			if (i==neighbourRouter.getRouterId()) {
-				// Entry is already updated for neighbour
+			if (i==neighbourRouter.getRouterId() || i==this.routerId) {
+				// Entry is already updated for neighbour and the router itself
 				continue;
 			}
 
