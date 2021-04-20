@@ -93,7 +93,9 @@ public class Router {
 	 * Deletes all the entries from {@link Router#routingTable}.
 	 */
 	public void clearRoutingTable () {
-
+		for (int i=0; i<routingTable.size(); i++) {
+			routingTable.set(i, null);
+		}
 	}
 
 	/**
@@ -225,10 +227,7 @@ public class Router {
 		}
 		else {
 			int numberOfLeadingSpaces = desiredLengthWithLeadingSpaces - string.length();
-			StringBuilder formattedString = new StringBuilder();
-			formattedString.append(" ".repeat(numberOfLeadingSpaces));
-			formattedString.append(string);
-			return formattedString.toString();
+			return " ".repeat(numberOfLeadingSpaces) + string;
 		}
 	}
 }
