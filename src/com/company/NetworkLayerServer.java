@@ -1,8 +1,6 @@
 package com.company;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -45,7 +43,7 @@ public class NetworkLayerServer {
 		initRoutingTables(); //Initialize routing tables for all routers
 
 		DVR(1); //Update routing table using distance vector routing until convergence
-		exit(0);
+		exit(0); // TODO: Remove this halt.
 		simpleDVR(1);
 		stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
 
@@ -74,7 +72,6 @@ public class NetworkLayerServer {
 		/**
 		 * pseudocode
 		 */
-
         /*
         while(convergence) {
             //convergence means no change in any routingTable before and after executing the following for loop
@@ -87,70 +84,32 @@ public class NetworkLayerServer {
         }
         */
 
-		/*while (true) {
+		printRoutersToFile("Log1BeforeDVR.txt");
+		int debugIntTemp = 0;
+
+		while (true) {
 			boolean atLeastOneUpdateOccurred = false;
 
 			for (Router router : routers) {
-
-				ArrayList<RoutingTableEntry> routingTable = router.getRoutingTable();
-
-				for (RoutingTableEntry routingTableEntry : routingTable) {
-
+				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
 					double neighbourDistance = routingTableEntry.getDistance();
-					if (neighbourDistance==INFINITY || neighbourDistance==0) {
-						// Not a neighbour, or the router itself; got to do nothing
+					if (neighbourDistance == INFINITY || neighbourDistance == 0) {
+						// Not a neighbour or the router itself; got to do nothing.
 						continue;
 					}
 
 					int neighbourID = routingTableEntry.getRouterId();
-					if (!routers.get(neighbourID-1).getIsStateUp()) {
-						// TODO: State not up, detach the link
-						continue;
-					}
-
-					Router neighbourRouter = routers.get(neighbourID-1);
-					atLeastOneUpdateOccurred = neighbourRouter.updateRoutingTable(router);
+					Router neighbourRouter = routers.get(neighbourID - 1);
+					atLeastOneUpdateOccurred = router.updateRoutingTable(neighbourRouter);
 				}
 			}
 
-			if (!atLeastOneUpdateOccurred) {
-				break;
-			}
-		}*/
-
-		boolean atLeastOneUpdateOccurred = false;
-
-		for (Router router : routers) {
-			for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
-				double neighbourDistance = routingTableEntry.getDistance();
-				if (neighbourDistance==INFINITY || neighbourDistance==0) {
-					// Not a neighbour or the router itself; got to do nothing.
-					continue;
-				}
-
-				int neighbourID = routingTableEntry.getRouterId();
-				Router neighbourRouter = routers.get(neighbourID-1);
-				/*if (!neighbourRouter.getIsStateUp()) {
-					// TODO: State not up, detach the link
-					continue;
-				}*/
-
-				atLeastOneUpdateOccurred = router.updateRoutingTable(neighbourRouter);
-			}
+			debugIntTemp++;
+			if (!atLeastOneUpdateOccurred) break;
 		}
 
-		if (!atLeastOneUpdateOccurred) DVR(1);
-		else return;
-
-		/*try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter("Log.txt"));
-			for (Router router : routers) bw.write(router.getRoutingTableAsString());
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		exit(0);*/
+		System.out.println("Looped for #" + debugIntTemp + " times.");
+		printRoutersToFile("Log2AfterDVR.txt");
 	}
 
 	public static synchronized void simpleDVR (int startingRouterId) {
@@ -200,6 +159,16 @@ public class NetworkLayerServer {
 		}
 		string += "\n\n";
 		return string;
+	}
+
+	private static void printRoutersToFile (String fileName) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+			for (Router router : routers) bw.write(router.getRoutingTableAsString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void readTopology () {
