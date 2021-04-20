@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.company.Constants.EPSILON;
 import static com.company.Constants.INFINITY;
 import static java.lang.System.exit;
 
@@ -95,7 +96,7 @@ public class NetworkLayerServer {
 				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
 					double neighbourDistance = routingTableEntry.getDistance();
 					System.out.print("\t\tneighbour #" + routingTableEntry.getRouterId() + "...."); // TODO: Remove this debug line
-					if (neighbourDistance == INFINITY || neighbourDistance == 0) {
+					if ((Math.abs(neighbourDistance-INFINITY)<EPSILON) || neighbourDistance == 0) {
 						// Not a neighbour or the router itself; got to do nothing.
 						System.out.println("not updating; cause: " + (neighbourDistance==0 ? "0" : "INFINITY")); // TODO: Remove this debug line
 						continue;
