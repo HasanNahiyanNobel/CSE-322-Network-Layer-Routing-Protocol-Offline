@@ -35,7 +35,7 @@ public class NetworkLayerServer {
 			}
 		}
 
-		//Task: Maintain an active client list
+		// Task: Maintain an active client list
 
 		ServerSocket serverSocket = null;
 		try {
@@ -50,14 +50,14 @@ public class NetworkLayerServer {
 		readTopology();
 		printRouters();
 
-		initRoutingTables(); //Initialize routing tables for all routers
+		initRoutingTables(); // Initialize routing tables for all routers
 
 		printRoutersToFile("RoutingTablesBeforeFirstDVR.txt");
 
-		DVR(1); //Update routing table using distance vector routing until convergence
+		DVR(4); // Update routing table using distance vector routing until convergence
 		simpleDVR(1);
 
-		stateChanger = new RouterStateChanger(); //Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
+		stateChanger = new RouterStateChanger(); // Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
 
 		while(true) {
 			try {
@@ -100,7 +100,8 @@ public class NetworkLayerServer {
 			if (DEBUG_DVR_MODE) appendStringToFile("Starting DVR loop #" + (totalNumberOfIterationsInDVR+1) + "------------------------------------------------------------------------\n", DVR_LOOP_LOG_PATH);
 			boolean atLeastOneUpdateOccurred = false;
 
-			for (Router router : routers) {
+			for (int i=0; i<routers.size(); i++) {
+				Router router = routers.get((i + startingRouterId - 1) % routers.size());
 				if (DEBUG_DVR_MODE) appendStringToFile("Processing router #" + router.getRouterId() + "\n", DVR_LOOP_LOG_PATH);
 				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
 					double neighbourDistance = routingTableEntry.getDistance();
