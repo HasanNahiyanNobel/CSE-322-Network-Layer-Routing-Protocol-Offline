@@ -2,7 +2,7 @@ package com.company;
 
 //Done!
 public interface Constants {
-	int INFINITY = 10;
+	int INFINITY = 15;
 	double LAMBDA = 0.10;
 	/**
 	 * If the absolute difference of two doubles is less than this value, they will be considered equal.
