@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.company.Constants.INFINITY;
+import static com.company.NetworkLayerServer.DVR;
 import static com.company.NetworkLayerServer.routers;
 
 // Work needed
@@ -90,12 +91,13 @@ public class Router {
 	}
 
 	/**
-	 * Deletes all the entries from {@link Router#routingTable}.
+	 * Deletes all the entries from {@link Router#routingTable}, and then starts a DVR.
 	 */
 	public void clearRoutingTable () {
 		for (int i=0; i<routingTable.size(); i++) {
 			routingTable.set(i, null);
 		}
+		DVR(this.routerId);
 	}
 
 	/**
