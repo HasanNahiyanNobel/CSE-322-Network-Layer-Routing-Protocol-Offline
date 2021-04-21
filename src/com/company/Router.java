@@ -209,7 +209,7 @@ public class Router {
 					.append("\t\t  ").append(getFormattedString(String.valueOf(routingTableEntry.getGatewayRouterId()), 2))
 					.append("\n");
 		}
-		string.append("-----------------------\n");
+		string.append("---------------------------\n");
 		return string.toString();
 	}
 

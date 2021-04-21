@@ -24,11 +24,11 @@ public class NetworkLayerServer {
 	static Map<Integer, Router> routerMap = new HashMap<>();
 
 	public static void main (String[] args) {
-		if (DEBUG_MODE) {
-			// Clear the debug log file
+		if (DEBUG_DVR_MODE) {
+			// Clear the debug log file and write current date-time
 			try {
-				PrintWriter pw = new PrintWriter(DEBUG_LOG_PATH);
-				pw.write("");
+				PrintWriter pw = new PrintWriter(DVR_LOOP_LOG_PATH);
+				pw.write("Debug log of: " + new Date() + "\n\n");
 				pw.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -52,7 +52,7 @@ public class NetworkLayerServer {
 
 		initRoutingTables(); //Initialize routing tables for all routers
 
-		printRoutersToFile("Log1BeforeDVR.txt");
+		printRoutersToFile("RoutingTablesBeforeFirstDVR.txt");
 
 		DVR(1); //Update routing table using distance vector routing until convergence
 		simpleDVR(1);
@@ -97,22 +97,22 @@ public class NetworkLayerServer {
         */
 
 		while (true) {
-			if (DEBUG_MODE) appendStringToDebugFile("\n\nStarting DVR loop #" + (totalNumberOfIterationsInDVR+1));
+			if (DEBUG_DVR_MODE) appendStringToFile("Starting DVR loop #" + (totalNumberOfIterationsInDVR+1) + "------------------------------------------------------------------------\n", DVR_LOOP_LOG_PATH);
 			boolean atLeastOneUpdateOccurred = false;
 
 			for (Router router : routers) {
-				if (DEBUG_MODE) appendStringToDebugFile("Processing router #" + router.getRouterId());
+				if (DEBUG_DVR_MODE) appendStringToFile("Processing router #" + router.getRouterId() + "\n", DVR_LOOP_LOG_PATH);
 				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
 					double neighbourDistance = routingTableEntry.getDistance();
-					if (DEBUG_MODE) appendStringToDebugFile("\t\tneighbour #" + routingTableEntry.getRouterId() + "....");
+					if (DEBUG_DVR_MODE) appendStringToFile("\t\tneighbour #" + routingTableEntry.getRouterId() + "....", DVR_LOOP_LOG_PATH);
 
 					if ((Math.abs(neighbourDistance-INFINITY)<EPSILON) || neighbourDistance == 0) {
 						// Not a neighbour or the router itself; got to do nothing.
-						if (DEBUG_MODE) appendStringToDebugFile("not updating; cause: " + (neighbourDistance==0 ? "same router" : "infinite distance"));
+						if (DEBUG_DVR_MODE) appendStringToFile("not updating; cause: " + (neighbourDistance==0 ? "same router\n" : "infinite distance\n"), DVR_LOOP_LOG_PATH);
 						continue;
 					}
 
-					if (DEBUG_MODE) appendStringToDebugFile("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")");
+					if (DEBUG_DVR_MODE) appendStringToFile("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")\n", DVR_LOOP_LOG_PATH);
 
 					int neighbourID = routingTableEntry.getRouterId();
 					Router neighbourRouter = routers.get(neighbourID - 1);
@@ -127,8 +127,9 @@ public class NetworkLayerServer {
 			}
 			totalNumberOfIterationsInDVR ++;
 			if (!atLeastOneUpdateOccurred) break;
+			if (DEBUG_DVR_MODE) appendStringToFile("\n\n", DVR_LOOP_LOG_PATH);
 		}
-		printRoutersToFile("Log2AfterDVR.txt");
+		printRoutersToFile("RoutingTablesAfterLastDVR.txt");
 	}
 
 	public static synchronized void simpleDVR (int startingRouterId) {
@@ -190,10 +191,10 @@ public class NetworkLayerServer {
 		}
 	}
 
-	private static void appendStringToDebugFile (String string) {
+	private static void appendStringToFile (String string, String filePath) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(DEBUG_LOG_PATH));
-			bw.append(string);
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath,true));
+			bw.write(string);
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
