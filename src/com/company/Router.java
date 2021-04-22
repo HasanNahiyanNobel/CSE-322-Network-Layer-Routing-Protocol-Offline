@@ -91,12 +91,22 @@ public class Router {
 	}
 
 	/**
-	 * Deletes all the entries from {@link Router#routingTable}, and then starts a DVR.
+	 * Sets distance to all the other routers as {@link Constants#INFINITY}, and gateway to this own
+	 *
+	 * @see <a href="https://www.youtube.com/watch?v=I3xlFMTZWnM">No particular place to go!</a>
+	 *
+	 * @implNote In ideal case, it should delete all the entries from {@link Router#routingTable}, and then start a DVR, if I understood this correctly. But this implementation needs a more complex DVR, so avoided it.
 	 */
 	public void clearRoutingTable () {
-		for (int i=0; i<routingTable.size(); i++) {
-			routingTable.set(i, null);
+		for (RoutingTableEntry routingTableEntry : routingTable) {
+			routingTableEntry.setDistance(INFINITY);
+			routingTableEntry.setGatewayRouterId(-1);
 		}
+
+		/*for (int i=0; i<routingTable.size(); i++) {
+		 	routingTable.set(i, null);
+		 }
+		*/
 		DVR(this.routerId);
 	}
 

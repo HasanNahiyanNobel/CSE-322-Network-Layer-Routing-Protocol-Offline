@@ -102,18 +102,28 @@ public class NetworkLayerServer {
 
 			for (int i=0; i<routers.size(); i++) {
 				Router router = routers.get((i + startingRouterId - 1) % routers.size());
+				ArrayList<RoutingTableEntry> routingTable = router.getRoutingTable();
+
 				if (DEBUG_DVR_MODE) appendStringToFile("Processing router #" + router.getRouterId() + "\n", DVR_LOOP_LOG_PATH);
-				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
-					double neighbourDistance = routingTableEntry.getDistance();
-					if (DEBUG_DVR_MODE) appendStringToFile("\t\tneighbour #" + routingTableEntry.getRouterId() + "....", DVR_LOOP_LOG_PATH);
 
-					if ((Math.abs(neighbourDistance-INFINITY)<EPSILON) || neighbourDistance == 0) {
-						// Not a neighbour or the router itself; got to do nothing.
-						if (DEBUG_DVR_MODE) appendStringToFile("not updating; cause: " + (neighbourDistance==0 ? "same router\n" : "infinite distance\n"), DVR_LOOP_LOG_PATH);
-						continue;
+				for (int routerID=1; routerID<=routingTable.size(); routerID++) {
+					RoutingTableEntry routingTableEntry = routingTable.get(routerID-1);
+
+					if (DEBUG_DVR_MODE) appendStringToFile("\t\trouter #" + routerID + "....", DVR_LOOP_LOG_PATH);
+
+					if (routingTableEntry==null) {
+
 					}
+					else {
+						double routerDistance = routingTableEntry.getDistance();
+						if ((Math.abs(routerDistance - INFINITY) < EPSILON) || routerDistance == 0) {
+							// Not a neighbour or the router itself; got to do nothing.
+							if (DEBUG_DVR_MODE) appendStringToFile("not updating; cause: " + (routerDistance == 0 ? "same router\n" : "infinite distance\n"), DVR_LOOP_LOG_PATH);
+							continue;
+						}
 
-					if (DEBUG_DVR_MODE) appendStringToFile("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")\n", DVR_LOOP_LOG_PATH);
+						if (DEBUG_DVR_MODE) appendStringToFile("updating; (distance,gatewayID)=(" + routerDistance + "," + routingTableEntry.getGatewayRouterId() + ")\n", DVR_LOOP_LOG_PATH);
+					}
 
 					int neighbourID = routingTableEntry.getRouterId();
 					Router neighbourRouter = routers.get(neighbourID - 1);
