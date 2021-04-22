@@ -18,6 +18,7 @@ public class Router {
 	private Boolean isStateUp; // True represents "UP" isStateUp and false is for "DOWN" isStateUp
 	private Map<Integer, IPAddress> gatewayIDtoIP;
 	private final double ROUTER_UP_PROBABILITY = 0.8;
+	private final int NO_GATEWAY_ID = -1;
 
 	public Router () {
 		interfaceAddresses = new ArrayList<>();
@@ -83,7 +84,7 @@ public class Router {
 			}
 			else {
 				aRoutersDistance = INFINITY; // Either the router is not neighbour, or not up, or both
-				aRoutersGatewayID = -1; // Gateway is not applicable
+				aRoutersGatewayID = NO_GATEWAY_ID; // Gateway is not applicable
 			}
 
 			routingTable.add(new RoutingTableEntry(aRoutersID,aRoutersDistance,aRoutersGatewayID));
@@ -91,12 +92,22 @@ public class Router {
 	}
 
 	/**
-	 * Deletes all the entries from {@link Router#routingTable}, and then starts a DVR.
+	 * Sets:
+	 * <list>
+	 *     <li><code>distance={@link Constants#INFINITY} to all routers</code></li>
+	 *     <li>Gateway router ID to {@link Router#NO_GATEWAY_ID}</li>
+	 * </list>
+	 *
+	 * @implNote Ideally it should delete all the entries from {@link Router#routingTable}, and then start a DVR. However, this implementation causes a complex code in DVR, so this function has been implemented like this.
 	 */
 	public void clearRoutingTable () {
-		for (int i=0; i<routingTable.size(); i++) {
-			routingTable.set(i, null);
+		for (RoutingTableEntry routingTableEntry : routingTable) {
+			routingTableEntry.setDistance(INFINITY);
+			routingTableEntry.setGatewayRouterId(NO_GATEWAY_ID);
 		}
+		/*for (int i=0; i<routingTable.size(); i++) {
+			routingTable.set(i, null);
+		}*/
 		DVR(this.routerId);
 	}
 
