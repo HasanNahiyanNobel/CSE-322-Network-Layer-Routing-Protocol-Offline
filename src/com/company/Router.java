@@ -100,7 +100,7 @@ public class Router {
 	 *
 	 * @implNote Ideally it should delete all the entries from {@link Router#routingTable}, and then start a DVR. However, this implementation causes a complex code in DVR, so this function has been implemented like this.
 	 */
-	public void clearRoutingTable () {
+	public synchronized void clearRoutingTable () {
 		for (RoutingTableEntry routingTableEntry : routingTable) {
 			routingTableEntry.setDistance(INFINITY);
 			routingTableEntry.setGatewayRouterId(NO_GATEWAY_ID);
@@ -108,6 +108,7 @@ public class Router {
 		/*for (int i=0; i<routingTable.size(); i++) {
 			routingTable.set(i, null);
 		}*/
+		System.out.println("Going to start DVR from router #" + this.routerId); // TODO: Remove this debug line
 		DVR(this.routerId);
 	}
 
@@ -127,7 +128,7 @@ public class Router {
 		ArrayList<RoutingTableEntry> neighbourRoutingTable = neighbourRouter.getRoutingTable();
 
 		for (int i=1; i<=routingTable.size(); i++) {
-
+			System.out.println("\t\tRouting table size: " + routingTable.size()); // TODO: Remove this debug line
 			if (i==neighbourRouter.getRouterId() || i==this.routerId) {
 				// Entry is already updated for neighbour and the router itself
 				continue;
@@ -155,6 +156,7 @@ public class Router {
 	 * Reverts the boolean value {@link Router#isStateUp}.
 	 */
 	public void revertState () {
+		System.out.println("Changing state of router #" + this.routerId + ", " + isStateUp + "⇾" + !isStateUp); // TODO: Remove this debug line
 		isStateUp = !isStateUp;
 		if (isStateUp) initiateRoutingTable();
 		else clearRoutingTable();

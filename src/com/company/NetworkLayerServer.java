@@ -13,7 +13,7 @@ import static com.company.Constants.*;
 public class NetworkLayerServer {
 
 	static int clientCount = 0;
-	static int totalNumberOfIterationsInDVR = 0;
+	static int totalNumberOfDVRs = 0;
 	static ArrayList<Router> routers = new ArrayList<>();
 	static RouterStateChanger stateChanger = null;
 	static Map<IPAddress,Integer> clientInterfaces = new HashMap<>(); //Each map entry represents number of client end devices connected to the interface
@@ -96,8 +96,11 @@ public class NetworkLayerServer {
         }
         */
 
+		int totalNumberOfIterationsInDVR = 0;
+
+		System.out.println("DVR started from router #" + startingRouterId); // TODO: Remove this debug line
 		while (true) {
-			if (DEBUG_DVR_MODE) appendStringToFile("Starting DVR loop #" + (totalNumberOfIterationsInDVR+1) + "------------------------------------------------------------------------\n", DVR_LOOP_LOG_PATH);
+			if (DEBUG_DVR_MODE) appendStringToFile("Starting DVR loop #" + (totalNumberOfDVRs+1) + "." + (totalNumberOfIterationsInDVR+1) + "------------------------------------------------------------------------\n", DVR_LOOP_LOG_PATH);
 			boolean atLeastOneUpdateOccurred = false;
 
 			for (int i=0; i<routers.size(); i++) {
@@ -126,11 +129,13 @@ public class NetworkLayerServer {
 					}
 				}
 			}
-			totalNumberOfIterationsInDVR ++;
-			if (!atLeastOneUpdateOccurred) break;
 			if (DEBUG_DVR_MODE) appendStringToFile("\n\n", DVR_LOOP_LOG_PATH);
+			totalNumberOfIterationsInDVR++;
+			if (!atLeastOneUpdateOccurred) break;
 		}
+		System.out.println("DVR ended from router #" + startingRouterId + ", after loops #" + totalNumberOfIterationsInDVR); // TODO: Remove this debug line
 		printRoutersToFile("RoutingTablesAfterLastDVR.txt");
+		totalNumberOfDVRs++;
 	}
 
 	public static synchronized void simpleDVR (int startingRouterId) {
@@ -192,7 +197,7 @@ public class NetworkLayerServer {
 		}
 	}
 
-	private static void appendStringToFile (String string, String filePath) {
+	private static synchronized void appendStringToFile (String string, String filePath) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath,true));
 			bw.write(string);
