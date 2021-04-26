@@ -18,6 +18,7 @@ public class Router {
 	private Boolean isStateUp; // True represents "UP" isStateUp and false is for "DOWN" isStateUp
 	private Map<Integer, IPAddress> gatewayIDtoIP;
 	private final double ROUTER_UP_PROBABILITY = 0.8;
+	private final int ONE_HOP_COST = 1;
 	private final int NO_GATEWAY_ID = -1;
 
 	public Router () {
@@ -82,7 +83,7 @@ public class Router {
 				aRoutersGatewayID = aRoutersID; // ID of its own
 			}
 			else if (neighbourRouterIDs.contains(aRoutersID) && routers.get(aRoutersID-1).getIsStateUp()) {
-				aRoutersDistance = 1; // Distance of a neighbour router which is up
+				aRoutersDistance = ONE_HOP_COST; // Distance of a neighbour router which is up
 				aRoutersGatewayID = aRoutersID; // ID of the neighbour
 			}
 			else {
@@ -131,8 +132,15 @@ public class Router {
 		ArrayList<RoutingTableEntry> neighbourRoutingTable = neighbourRouter.getRoutingTable();
 
 		for (int i=1; i<=routingTable.size(); i++) {
-			if (i==neighbourRouter.getRouterId() || i==this.routerId) {
-				// Entry is already updated for neighbour and the router itself
+			if (i==this.routerId) {
+				// No need to update for the router itself
+				continue;
+			}
+
+			if (i==neighbourRouter.getRouterId() && routingTable.get(i-1).getDistance()==INFINITY) {
+				// State of neighbour has been switched to up, set the distance
+				routingTable.get(i-1).setDistance(ONE_HOP_COST);
+				flagHasAnyUpdateOccurred = true;
 				continue;
 			}
 
