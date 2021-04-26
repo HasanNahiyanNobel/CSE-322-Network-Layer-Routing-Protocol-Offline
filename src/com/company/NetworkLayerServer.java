@@ -133,7 +133,7 @@ public class NetworkLayerServer {
 			totalNumberOfIterationsInDVR++;
 			if (!atLeastOneUpdateOccurred) break;
 		}
-		System.out.println("DVR ended from router #" + startingRouterId + ", after loops #" + totalNumberOfIterationsInDVR); // TODO: Remove this debug line
+		System.out.println("DVR ended from router #" + startingRouterId + ", after loop(s) #" + totalNumberOfIterationsInDVR); // TODO: Remove this debug line
 		printRoutersToFile("RoutingTablesAfterLastDVR.txt");
 		totalNumberOfDVRs++;
 	}

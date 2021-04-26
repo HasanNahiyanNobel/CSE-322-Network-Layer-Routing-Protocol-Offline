@@ -69,6 +69,9 @@ public class Router {
 	 * </list>
 	 */
 	public void initiateRoutingTable () {
+		// Clear the old table first!
+		routingTable = new ArrayList<>();
+
 		for (int aRoutersID=1; aRoutersID<=routers.size(); aRoutersID++) {
 
 			double aRoutersDistance;
@@ -128,7 +131,6 @@ public class Router {
 		ArrayList<RoutingTableEntry> neighbourRoutingTable = neighbourRouter.getRoutingTable();
 
 		for (int i=1; i<=routingTable.size(); i++) {
-			System.out.println("\t\tRouting table size: " + routingTable.size()); // TODO: Remove this debug line
 			if (i==neighbourRouter.getRouterId() || i==this.routerId) {
 				// Entry is already updated for neighbour and the router itself
 				continue;
