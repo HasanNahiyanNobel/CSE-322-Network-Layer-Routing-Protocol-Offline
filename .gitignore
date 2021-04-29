@@ -1,2 +1,6 @@
 /.idea/
 /CSE 322 Network Layer Routing Protocol Offline.iml
+/out/
+/RoutingTablesBeforeFirstDVR.txt
+/RoutingTablesAfterLastDVR.txt
+/LogOfDVRLoop.txt
