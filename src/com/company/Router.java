@@ -128,38 +128,74 @@ public class Router {
 			return true;
 		}
 
-		boolean flagHasAnyUpdateOccurred = false;
+		boolean atLeastOneUpdateOccurred = false;
 		ArrayList<RoutingTableEntry> neighbourRoutingTable = neighbourRouter.getRoutingTable();
 
 		for (int i=1; i<=routingTable.size(); i++) {
-			if (i==this.routerId) {
-				// No need to update for the router itself
-				continue;
-			}
-
-			if (i==neighbourRouter.getRouterId() && routingTable.get(i-1).getDistance()==INFINITY) {
-				// State of neighbour has been switched to up, set the distance
-				routingTable.get(i-1).setDistance(ONE_HOP_COST);
-				flagHasAnyUpdateOccurred = true;
-				continue;
-			}
-
-			double currentDistance = routingTable.get(i-1).getDistance();
-			double distanceViaNeighbour = 1 + neighbourRoutingTable.get(i-1).getDistance(); // +1 for the distance from router to neighbour
-
-			if (currentDistance > distanceViaNeighbour) {
-				routingTable.get(i-1).setDistance(distanceViaNeighbour);
-				routingTable.get(i-1).setGatewayRouterId(neighbourRouter.getRouterId());
-				flagHasAnyUpdateOccurred = true;
-			}
+			atLeastOneUpdateOccurred = updateRoutingTableEntry(i, atLeastOneUpdateOccurred, neighbourRouter, neighbourRoutingTable);
 
 		}
 
-		return flagHasAnyUpdateOccurred;
+		return atLeastOneUpdateOccurred;
 	}
 
-	public boolean sfUpdateRoutingTable (Router neighbour) {
-		return false;
+	/**
+	 * Using <i>split horizon with poison reverse</i> rule, updates routing table of this router.
+	 * @param neighbourRouter A neighbour of the router
+	 * @return {@code true} if any update has occurred, otherwise {@code false}
+	 */
+	public boolean sfUpdateRoutingTable (Router neighbourRouter) {
+		if (!neighbourRouter.getIsStateUp()) {
+			// Neighbour is down, set distance to infinity.
+			routingTable.get(neighbourRouter.getRouterId()-1).setDistance(INFINITY);
+			return true;
+		}
+
+		boolean atLeastOneUpdateOccurred = false;
+		ArrayList<RoutingTableEntry> neighbourRoutingTable = neighbourRouter.getRoutingTable();
+
+		for (int i=1; i<=routingTable.size(); i++) {
+			if (neighbourRoutingTable.get(i-1).getGatewayRouterId()==this.routerId) {
+				// Split horizon rule, no need to update if gateway is the router itself
+				continue;
+			}
+
+			atLeastOneUpdateOccurred = updateRoutingTableEntry(i, atLeastOneUpdateOccurred, neighbourRouter, neighbourRoutingTable);
+
+		}
+
+		return atLeastOneUpdateOccurred;
+	}
+
+	/**
+	 * Updates a single entry of routing table
+	 * @param i Denotes that the entry at {@code i-1} is being updated
+	 * @param atLeastOneUpdateOccurred Denotes whether any update has occurred still
+	 * @param neighbourRouter The neighbour against which the routing table is being updated
+	 * @param neighbourRoutingTable Routing table of the neighbour
+	 * @return {@code true} if any update has occurred, otherwise {@code false}
+	 */
+	private boolean updateRoutingTableEntry (int i, boolean atLeastOneUpdateOccurred, Router neighbourRouter, ArrayList<RoutingTableEntry> neighbourRoutingTable) {
+		if (i==this.routerId) {
+			// No need to update for the router itself
+			return atLeastOneUpdateOccurred;
+		}
+
+		if (i==neighbourRouter.getRouterId() && routingTable.get(i-1).getDistance()==INFINITY) {
+			// State of neighbour has been switched to up, set the distance
+			routingTable.get(i-1).setDistance(ONE_HOP_COST);
+			return true;
+		}
+
+		double currentDistance = routingTable.get(i-1).getDistance();
+		double distanceViaNeighbour = 1 + neighbourRoutingTable.get(i-1).getDistance(); // +1 for the distance from router to neighbour
+
+		if (currentDistance > distanceViaNeighbour) {
+			routingTable.get(i-1).setDistance(distanceViaNeighbour);
+			routingTable.get(i-1).setGatewayRouterId(neighbourRouter.getRouterId());
+			atLeastOneUpdateOccurred = true;
+		}
+		return atLeastOneUpdateOccurred;
 	}
 
 	/**

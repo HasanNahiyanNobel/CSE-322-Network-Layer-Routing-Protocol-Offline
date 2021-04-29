@@ -55,7 +55,7 @@ public class NetworkLayerServer {
 		printRoutersToFile("RoutingTablesBeforeFirstDVR.txt");
 
 		DVR(4); // Update routing table using distance vector routing until convergence
-		simpleDVR(1);
+		//simpleDVR(4);
 
 		stateChanger = new RouterStateChanger(); // Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
 
@@ -122,6 +122,49 @@ public class NetworkLayerServer {
 					Router neighbourRouter = routers.get(neighbourID - 1);
 
 					if (!atLeastOneUpdateOccurred) {
+						atLeastOneUpdateOccurred = router.sfUpdateRoutingTable(neighbourRouter);
+					}
+					else {
+						router.sfUpdateRoutingTable(neighbourRouter);
+					}
+				}
+			}
+			if (DEBUG_DVR_MODE) appendStringToFile("\n\n", DVR_LOOP_LOG_PATH);
+			totalNumberOfIterationsInDVR++;
+			if (!atLeastOneUpdateOccurred) break;
+		}
+		System.out.println("DVR ended from router #" + startingRouterId + ", after loop(s) #" + totalNumberOfIterationsInDVR); // TODO: Remove this debug line
+		printRoutersToFile("RoutingTablesAfterLastDVR.txt");
+		totalNumberOfDVRs++;
+	}
+
+	public static synchronized void simpleDVR (int startingRouterId) {
+		int totalNumberOfIterationsInDVR = 0;
+
+		System.out.println("DVR started from router #" + startingRouterId); // TODO: Remove this debug line
+		while (true) {
+			if (DEBUG_DVR_MODE) appendStringToFile("Starting DVR loop #" + (totalNumberOfDVRs+1) + "." + (totalNumberOfIterationsInDVR+1) + "------------------------------------------------------------------------\n", DVR_LOOP_LOG_PATH);
+			boolean atLeastOneUpdateOccurred = false;
+
+			for (int i=0; i<routers.size(); i++) {
+				Router router = routers.get((i + startingRouterId - 1) % routers.size());
+				if (DEBUG_DVR_MODE) appendStringToFile("Processing router #" + router.getRouterId() + "\n", DVR_LOOP_LOG_PATH);
+				for (RoutingTableEntry routingTableEntry : router.getRoutingTable()) {
+					double neighbourDistance = routingTableEntry.getDistance();
+					if (DEBUG_DVR_MODE) appendStringToFile("\t\tneighbour #" + routingTableEntry.getRouterId() + "....", DVR_LOOP_LOG_PATH);
+
+					if ((Math.abs(neighbourDistance-INFINITY)<EPSILON) || neighbourDistance == 0) {
+						// Not a neighbour or the router itself; got to do nothing.
+						if (DEBUG_DVR_MODE) appendStringToFile("not updating; cause: " + (neighbourDistance==0 ? "same router\n" : "infinite distance\n"), DVR_LOOP_LOG_PATH);
+						continue;
+					}
+
+					if (DEBUG_DVR_MODE) appendStringToFile("updating; (distance,gatewayID)=("+neighbourDistance+","+routingTableEntry.getGatewayRouterId()+")\n", DVR_LOOP_LOG_PATH);
+
+					int neighbourID = routingTableEntry.getRouterId();
+					Router neighbourRouter = routers.get(neighbourID - 1);
+
+					if (!atLeastOneUpdateOccurred) {
 						atLeastOneUpdateOccurred = router.updateRoutingTable(neighbourRouter);
 					}
 					else {
@@ -136,10 +179,6 @@ public class NetworkLayerServer {
 		System.out.println("DVR ended from router #" + startingRouterId + ", after loop(s) #" + totalNumberOfIterationsInDVR); // TODO: Remove this debug line
 		printRoutersToFile("RoutingTablesAfterLastDVR.txt");
 		totalNumberOfDVRs++;
-	}
-
-	public static synchronized void simpleDVR (int startingRouterId) {
-
 	}
 
 	public static EndDevice getClientDeviceSetup () {
