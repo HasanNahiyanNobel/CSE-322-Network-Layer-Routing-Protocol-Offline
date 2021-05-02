@@ -11,7 +11,7 @@ public class Packet implements Serializable {
 	private IPAddress sourceIP;
 	int hopCount;
 
-	public Packet(String message, String specialMessage, IPAddress sourceIP, IPAddress destinationIP) {
+	public Packet (String message, String specialMessage, IPAddress sourceIP, IPAddress destinationIP) {
 		this.message = message;
 		this.specialMessage = specialMessage;
 		this.sourceIP = sourceIP;
@@ -19,36 +19,35 @@ public class Packet implements Serializable {
 		hopCount = 0;
 	}
 
-	public IPAddress getSourceIP() {
+	public IPAddress getSourceIP () {
 		return sourceIP;
 	}
 
-	public void setSourceIP(IPAddress sourceIP) {
+	public void setSourceIP (IPAddress sourceIP) {
 		this.sourceIP = sourceIP;
 	}
 
-	public String getMessage() {
+	public String getMessage () {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage (String message) {
 		this.message = message;
 	}
 
-	public String getSpecialMessage() {
+	public String getSpecialMessage () {
 		return specialMessage;
 	}
 
-	public void setSpecialMessage(String specialMessage) {
+	public void setSpecialMessage (String specialMessage) {
 		this.specialMessage = specialMessage;
 	}
 
-	public IPAddress getDestinationIP() {
+	public IPAddress getDestinationIP () {
 		return destinationIP;
 	}
 
-	public void setDestinationIP(IPAddress destinationIP) {
+	public void setDestinationIP (IPAddress destinationIP) {
 		this.destinationIP = destinationIP;
 	}
-
 }

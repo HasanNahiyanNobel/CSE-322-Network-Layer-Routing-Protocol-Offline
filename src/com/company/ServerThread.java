@@ -5,7 +5,7 @@ public class ServerThread implements Runnable {
 	NetworkUtility networkUtility;
 	EndDevice endDevice;
 
-	ServerThread(NetworkUtility networkUtility, EndDevice endDevice) {
+	ServerThread (NetworkUtility networkUtility, EndDevice endDevice) {
 		this.networkUtility = networkUtility;
 		this.endDevice = endDevice;
 		System.out.println("Server Ready for client " + NetworkLayerServer.clientCount);
@@ -14,7 +14,7 @@ public class ServerThread implements Runnable {
 	}
 
 	@Override
-	public void run() {
+	public void run () {
 		/*
 		  Synchronize actions with client.
 		 */
@@ -29,7 +29,7 @@ public class ServerThread implements Runnable {
 	}
 
 
-	public Boolean deliverPacket(Packet p) {
+	public Boolean deliverPacket (Packet packet) {
 
         
         /*
@@ -62,7 +62,7 @@ public class ServerThread implements Runnable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj); //To change body of generated methods, choose Tools | Templates.
+	public boolean equals (Object object) {
+		return super.equals(object); //To change body of generated methods, choose Tools | Templates.
 	}
 }

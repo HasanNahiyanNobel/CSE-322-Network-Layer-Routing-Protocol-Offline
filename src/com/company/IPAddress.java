@@ -8,7 +8,7 @@ public class IPAddress implements Serializable {
 	private Short bytes[];
 	private String string;
 
-	public IPAddress(String string) {
+	public IPAddress (String string) {
 		bytes = new Short[4];
 		this.string = string;
 		String[] temp = string.split("\\.");
@@ -17,17 +17,17 @@ public class IPAddress implements Serializable {
 		}
 	}
 
-	public Short[] getBytes()
-	{
+	public Short[] getBytes () {
 		return bytes;
 	}
 
-	public String getString()
-	{
+	public String getString () {
 		return string;
 	}
 
 	@Override
-	public String toString() { return string; }
+	public String toString () {
+		return string;
+	}
 
 }

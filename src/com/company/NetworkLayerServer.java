@@ -194,7 +194,7 @@ public class NetworkLayerServer {
 		for (Map.Entry<IPAddress, Integer> entry : clientInterfaces.entrySet()) {
 			IPAddress key = entry.getKey();
 			Integer value = entry.getValue();
-			if(i == r) {
+			if (i == r) {
 				gateway = key;
 				ip = new IPAddress(gateway.getBytes()[0] + "." + gateway.getBytes()[1] + "." + gateway.getBytes()[2] + "." + (value+2));
 				value++;

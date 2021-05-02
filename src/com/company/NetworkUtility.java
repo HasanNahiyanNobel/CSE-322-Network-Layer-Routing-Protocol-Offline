@@ -14,31 +14,7 @@ public class NetworkUtility {
 	private ObjectInputStream objectInputStream;
 	private ObjectOutputStream objectOutputStream;
 
-
-
-	public void print(){
-		System.out.println(socket.getLocalAddress().toString());
-		System.out.println(socket.getInetAddress().toString());
-		System.out.println(socket.getRemoteSocketAddress().toString());
-		System.out.println(socket.getLocalSocketAddress().toString());
-	}
-
-	public SocketAddress getRemoteSocketAddress(){return socket.getRemoteSocketAddress();}
-	public InetAddress getInetAddress(){return socket.getInetAddress();}
-
-	public NetworkUtility(String s, int port){
-		try {
-			this.socket = new Socket(s, port);
-			objectInputStream = new ObjectInputStream(socket.getInputStream());
-			objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-			//socket.setSoTimeout(3 * 1000);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public NetworkUtility(Socket socket){
+	public NetworkUtility (Socket socket) {
 		try {
 			this.socket = socket;
 			objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -49,7 +25,34 @@ public class NetworkUtility {
 		}
 	}
 
-	public Object read(){
+	public NetworkUtility (String host, int port) {
+		try {
+			this.socket = new Socket(host, port);
+			objectInputStream = new ObjectInputStream(socket.getInputStream());
+			objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+			//socket.setSoTimeout(3 * 1000);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void print () {
+		System.out.println(socket.getLocalAddress().toString());
+		System.out.println(socket.getInetAddress().toString());
+		System.out.println(socket.getRemoteSocketAddress().toString());
+		System.out.println(socket.getLocalSocketAddress().toString());
+	}
+
+	public SocketAddress getRemoteSocketAddress () {
+		return socket.getRemoteSocketAddress();
+	}
+
+	public InetAddress getInetAddress () {
+		return socket.getInetAddress();
+	}
+
+	public Object read () {
 		Object object = null;
 		try {
 			object = objectInputStream.readObject();
@@ -61,7 +64,7 @@ public class NetworkUtility {
 		return object;
 	}
 
-	public void write(Object object){
+	public void write (Object object) {
 		try {
 			objectOutputStream.writeObject(object);
 		} catch (IOException e) {
@@ -69,7 +72,7 @@ public class NetworkUtility {
 		}
 	}
 
-	public void closeConnection(){
+	public void closeConnection () {
 		try {
 			objectInputStream.close();
 			objectOutputStream.close();

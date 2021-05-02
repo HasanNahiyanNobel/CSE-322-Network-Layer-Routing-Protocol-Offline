@@ -2,7 +2,7 @@ package com.company;
 
 //Work needed
 public class Client {
-	public static void main(String[] args) throws InterruptedException {
+	public static void main (String[] args) throws InterruptedException {
 		NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
 		System.out.println("Connected to server");
 		/**
