@@ -1,5 +1,6 @@
 package com.company;
 
+import java.net.InetAddress;
 import java.util.Random;
 
 import static com.company.NetworkLayerServer.endDeviceMap;
@@ -9,20 +10,30 @@ import static java.lang.System.exit;
 //Work needed
 public class Client {
 	public static void main (String[] args) throws InterruptedException {
-		System.out.println(generateRandomString(10));
-		exit(0);
-
 		NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
 		System.out.println("Connected to server");
 
-		EndDevice endDevice = endDeviceMap.get(networkUtility.getInetAddress());
+		InetAddress inetAddress = networkUtility.getInetAddress();
+		IPAddress ipAddress = new IPAddress(inetAddress.getHostAddress());
+
+		EndDevice endDevice = endDeviceMap.get(ipAddress);
+
+		System.out.println(endDevice);
+		exit(0);
 
 		for (int i=0; i<100; i++) {
-			String message;
+			String message = generateRandomString(10);
+			String specialMessage = generateRandomString(15);
 
 			int indexOfRandomReceiver = new Random().nextInt(endDevices.size());
 			EndDevice randomReceiver = endDevices.get(indexOfRandomReceiver);
 
+			if (i==20) {
+				//TODO: Implement the special case
+			}
+
+			//Packet packet = new Packet(message, specialMessage, inetAddress, randomReceiver.getIpAddress());
+			//networkUtility.write();
 		}
         
         /*
@@ -35,7 +46,9 @@ public class Client {
 	        6.      Assign a random receiver from active client list
 	        7.      if(i==20)
 	        8.      {
-	        9.            Send the message and recipient IP address to server and a special request "SHOW_ROUTE"
+	        9.              Send the message and recipient IP address to server
+	                        and
+	                        a special request "SHOW_ROUTE"
 	        10.           Display routing path, hop count and routing table of each router [You need to receive
 	                            all the required info from the server in response to "SHOW_ROUTE" request]
 	        11.     }

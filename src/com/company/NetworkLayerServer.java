@@ -66,8 +66,8 @@ public class NetworkLayerServer {
 				EndDevice endDevice = getClientDeviceSetup();
 				clientCount++;
 				endDevices.add(endDevice);
-				endDeviceMap.put(endDevice.getIpAddress(),endDevice);
-				new ServerThread(new NetworkUtility(socket), endDevice);
+				endDeviceMap.put(endDevice.getIpAddress(), endDevice);
+				ServerThread serverThread = new ServerThread(new NetworkUtility(socket), endDevice);
 			} catch (IOException ex) {
 				Logger.getLogger(NetworkLayerServer.class.getName()).log(Level.SEVERE, null, ex);
 			}

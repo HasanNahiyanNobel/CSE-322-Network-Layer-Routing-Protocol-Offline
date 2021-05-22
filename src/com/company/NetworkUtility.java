@@ -44,6 +44,10 @@ public class NetworkUtility {
 		System.out.println(socket.getLocalSocketAddress().toString());
 	}
 
+	public SocketAddress getLocalSocketAddress () {
+		return socket.getLocalSocketAddress();
+	}
+
 	public SocketAddress getRemoteSocketAddress () {
 		return socket.getRemoteSocketAddress();
 	}

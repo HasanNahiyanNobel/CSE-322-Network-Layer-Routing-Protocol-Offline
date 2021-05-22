@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 //Done!
 public class IPAddress implements Serializable {
-
 	private Short bytes[];
 	private String string;
 
@@ -29,5 +28,4 @@ public class IPAddress implements Serializable {
 	public String toString () {
 		return string;
 	}
-
 }

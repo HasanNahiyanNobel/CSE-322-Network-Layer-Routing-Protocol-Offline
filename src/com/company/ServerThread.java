@@ -13,25 +13,21 @@ public class ServerThread implements Runnable {
 		new Thread(this).start();
 	}
 
+	/**
+	 * Synchronizes actions with client.
+	 */
 	@Override
 	public void run () {
-		/*
-		  Synchronize actions with client.
-		 */
-        
         /*
-        Tasks:
-        1. Upon receiving a packet and recipient, call deliverPacket(packet)
-        2. If the packet contains "SHOW_ROUTE" request, then fetch the required information
-                and send back to client
-        3. Either send acknowledgement with number of hops or send failure message back to client
+	        Tasks:
+	        1. Upon receiving a packet and recipient, call deliverPacket(packet)
+	        2. If the packet contains "SHOW_ROUTE" request, then fetch the required information and send back to client
+	        3. Either send acknowledgement with number of hops or send failure message back to client
         */
 	}
 
 
 	public Boolean deliverPacket (Packet packet) {
-
-        
         /*
         1. Find the router s which has an interface
                 such that the interface and source end device have same network address.

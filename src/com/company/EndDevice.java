@@ -26,4 +26,11 @@ public class EndDevice implements Serializable {
 	public Integer getDeviceID () {
 		return deviceID;
 	}
+
+	@Override
+	public String toString () {
+		return "IP Address: " + ipAddress + '\n' +
+				"Gateway: " + gateway + '\n' +
+				"Device ID: " + deviceID;
+	}
 }
