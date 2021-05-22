@@ -56,6 +56,10 @@ public class NetworkUtility {
 		return socket.getInetAddress();
 	}
 
+	public Socket getSocket () {
+		return socket;
+	}
+
 	public Object read () {
 		Object object = null;
 		try {

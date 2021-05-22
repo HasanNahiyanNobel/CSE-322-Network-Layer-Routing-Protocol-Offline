@@ -16,6 +16,9 @@ public class Client {
 		InetAddress inetAddress = networkUtility.getInetAddress();
 		IPAddress ipAddress = new IPAddress(inetAddress.getHostAddress());
 
+		networkUtility.print();
+		exit(0);
+
 		EndDevice endDevice = endDeviceMap.get(ipAddress);
 
 		System.out.println(endDevice);

@@ -185,13 +185,15 @@ public class NetworkLayerServer {
 		Random random = new Random(System.currentTimeMillis());
 		int r = Math.abs(random.nextInt(clientInterfaces.size()));
 
-		System.out.println("Size: " + clientInterfaces.size() + "\n" + r);
+		System.out.println("Client interface size: " + clientInterfaces.size() + "\n" +
+							"Random index: " + r);
 
 		IPAddress ip = null;
 		IPAddress gateway = null;
 
 		int i = 0;
 		for (Map.Entry<IPAddress, Integer> entry : clientInterfaces.entrySet()) {
+			//TODO: Check whether we really need these two lines before if-block. #minor
 			IPAddress key = entry.getKey();
 			Integer value = entry.getValue();
 			if (i == r) {
@@ -207,7 +209,7 @@ public class NetworkLayerServer {
 
 		EndDevice device = new EndDevice(ip, gateway, endDevices.size());
 
-		System.out.println("Device : " + ip + "::::" + gateway);
+		System.out.println("Device: " + ip + "::::" + gateway);
 		return device;
 	}
 
