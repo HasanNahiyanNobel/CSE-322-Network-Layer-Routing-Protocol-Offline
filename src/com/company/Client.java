@@ -1,9 +1,7 @@
 package com.company;
 
-import java.net.InetAddress;
 import java.util.Random;
 
-import static com.company.NetworkLayerServer.endDeviceMap;
 import static com.company.NetworkLayerServer.endDevices;
 import static java.lang.System.exit;
 
@@ -13,15 +11,9 @@ public class Client {
 		NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
 		System.out.println("Connected to server");
 
-		InetAddress inetAddress = networkUtility.getInetAddress();
-		IPAddress ipAddress = new IPAddress(inetAddress.getHostAddress());
+		String letsSeeWhatIGet = (String) networkUtility.read();
 
-		networkUtility.print();
-		exit(0);
-
-		EndDevice endDevice = endDeviceMap.get(ipAddress);
-
-		System.out.println(endDevice);
+		System.out.println(letsSeeWhatIGet);
 		exit(0);
 
 		for (int i=0; i<100; i++) {
