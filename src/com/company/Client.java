@@ -11,9 +11,8 @@ public class Client {
 		NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
 		System.out.println("Connected to server");
 
-		String letsSeeWhatIGet = (String) networkUtility.read();
-
-		System.out.println(letsSeeWhatIGet);
+		EndDevice endDevice = (EndDevice) networkUtility.read();
+		System.out.println(endDevice);
 		exit(0);
 
 		for (int i=0; i<100; i++) {
