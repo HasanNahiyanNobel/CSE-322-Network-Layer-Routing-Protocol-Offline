@@ -3,31 +3,38 @@ package com.company;
 import java.util.Random;
 
 import static com.company.NetworkLayerServer.endDevices;
-import static java.lang.System.exit;
 
 //Work needed
 public class Client {
 	public static void main (String[] args) throws InterruptedException {
 		NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
-		System.out.println("Connected to server");
+		System.out.println("Connected to server.");
 
 		EndDevice endDevice = (EndDevice) networkUtility.read();
+		IPAddress ipAddress = endDevice.getIpAddress();
+		IPAddress gateway = endDevice.getGateway();
+		int deviceID = endDevice.getDeviceID();
+
 		System.out.println(endDevice);
-		exit(0);
 
 		for (int i=0; i<100; i++) {
 			String message = generateRandomString(10);
 			String specialMessage = generateRandomString(15);
 
+			System.out.println(endDevices.isEmpty());
 			int indexOfRandomReceiver = new Random().nextInt(endDevices.size());
 			EndDevice randomReceiver = endDevices.get(indexOfRandomReceiver);
+
+			System.out.println("Random receiver #" + (i+1));
+			System.out.println(randomReceiver);
 
 			if (i==20) {
 				//TODO: Implement the special case
 			}
 
-			//Packet packet = new Packet(message, specialMessage, inetAddress, randomReceiver.getIpAddress());
-			//networkUtility.write();
+			Packet packet = new Packet(message, specialMessage, ipAddress, randomReceiver.getIpAddress());
+			System.out.println("Writing packet: " + ipAddress + "::::" + randomReceiver.getIpAddress());
+			networkUtility.write(packet);
 		}
         
         /*

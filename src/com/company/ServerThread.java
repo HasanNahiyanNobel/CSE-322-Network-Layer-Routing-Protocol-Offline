@@ -18,6 +18,8 @@ public class ServerThread implements Runnable {
 	 */
 	@Override
 	public void run () {
+		Packet packet = (Packet) networkUtility.read();
+		deliverPacket(packet);
         /*
 	        Tasks:
 	        1. Upon receiving a packet and recipient, call deliverPacket(packet)
@@ -29,6 +31,7 @@ public class ServerThread implements Runnable {
 
 
 	public Boolean deliverPacket (Packet packet) {
+		System.out.println("Yes delivered a packet!");
         /*
         1. Find the router s which has an interface
                 such that the interface and source end device have same network address.
