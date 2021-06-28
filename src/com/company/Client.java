@@ -2,9 +2,6 @@ package com.company;
 
 import java.util.Random;
 
-import static com.company.NetworkLayerServer.endDevices;
-import static java.lang.System.exit;
-
 //Work needed
 public class Client {
 	public static void main (String[] args) throws InterruptedException {
@@ -12,22 +9,18 @@ public class Client {
 		System.out.println("Connected to server");
 
 		EndDevice endDevice = (EndDevice) networkUtility.read();
-		System.out.println(endDevice);
-		exit(0);
 
 		for (int i=0; i<100; i++) {
 			String message = generateRandomString(10);
 			String specialMessage = generateRandomString(15);
 
-			int indexOfRandomReceiver = new Random().nextInt(endDevices.size());
-			EndDevice randomReceiver = endDevices.get(indexOfRandomReceiver);
-
 			if (i==20) {
 				//TODO: Implement the special case
 			}
 
-			//Packet packet = new Packet(message, specialMessage, inetAddress, randomReceiver.getIpAddress());
-			//networkUtility.write();
+			Packet packet = new Packet(message, specialMessage, endDevice.getIpAddress(), null);
+			System.out.println("Writing packet.");
+			networkUtility.write(packet);
 		}
         
         /*

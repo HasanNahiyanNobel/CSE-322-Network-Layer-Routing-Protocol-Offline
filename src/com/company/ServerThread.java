@@ -9,7 +9,6 @@ public class ServerThread implements Runnable {
 		this.networkUtility = networkUtility;
 		this.endDevice = endDevice;
 		System.out.println("Server Ready for client " + NetworkLayerServer.clientCount);
-		NetworkLayerServer.clientCount++;
 		new Thread(this).start();
 	}
 
