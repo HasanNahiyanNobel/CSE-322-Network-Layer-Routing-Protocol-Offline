@@ -1,6 +1,9 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Random;
+
+import static com.company.NetworkLayerServer.endDevices;
 
 // Work needed
 public class ServerThread implements Runnable {
@@ -33,13 +36,18 @@ public class ServerThread implements Runnable {
 		ArrayList<Packet> packets = (ArrayList<Packet>) networkUtility.read();
 
 		for (Packet packet : packets) {
+			int indexOfRandomReceiver = new Random().nextInt(endDevices.size()) ;
+			EndDevice randomReceiver = endDevices.get(indexOfRandomReceiver);
+
+			packet.setDestinationIP(randomReceiver.getIpAddress());
+
+			System.out.println("Delivering packet " + packet.getSourceIP() + "::::" + packet.getDestinationIP());
 			deliverPacket(packet);
 		}
 	}
 
 
 	public Boolean deliverPacket (Packet packet) {
-		System.out.println("Delivered a packet!");
         /*
         1. Find the router s which has an interface
                 such that the interface and source end device have same network address.
