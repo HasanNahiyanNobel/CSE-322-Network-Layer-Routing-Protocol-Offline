@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.ArrayList;
+
 // Work needed
 public class ServerThread implements Runnable {
 	NetworkUtility networkUtility;
@@ -27,8 +29,12 @@ public class ServerThread implements Runnable {
 	        2. If the packet contains "SHOW_ROUTE" request, then fetch the required information and send back to client
 	        3. Either send acknowledgement with number of hops or send failure message back to client
         */
-		Packet packet = (Packet) networkUtility.read();
-		deliverPacket(packet);
+
+		ArrayList<Packet> packets = (ArrayList<Packet>) networkUtility.read();
+
+		for (Packet packet : packets) {
+			deliverPacket(packet);
+		}
 	}
 
 

@@ -1,5 +1,6 @@
 package com.company;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 //Work needed
@@ -10,19 +11,20 @@ public class Client {
 
 		EndDevice endDevice = (EndDevice) networkUtility.read();
 
+		ArrayList<Packet> packets = new ArrayList<>();
+
 		for (int i=0; i<100; i++) {
 			String message = generateRandomString(10);
-			String specialMessage = null;
+			String specialMessage;
 
-			if (i==20) {
-				//TODO: Implement the special case
-				specialMessage = "SHOW_ROUTE";
-			}
+			if (i==20) specialMessage = "SHOW_ROUTE";
+			else specialMessage = null;
 
 			Packet packet = new Packet(message, specialMessage, endDevice.getIpAddress(), null);
-			System.out.println("Writing packet.");
-			networkUtility.write(packet);
+			packets.add(packet);
 		}
+
+		networkUtility.write(packets);
         
         /*
         Tasks:
