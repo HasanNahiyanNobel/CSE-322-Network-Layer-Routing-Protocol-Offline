@@ -24,10 +24,13 @@ public class ServerThread implements Runnable {
 	        3. Either send acknowledgement with number of hops or send failure message back to client
         */
 		networkUtility.write(endDevice);
+		Packet packet = (Packet) networkUtility.read();
+		deliverPacket(packet);
 	}
 
 
 	public Boolean deliverPacket (Packet packet) {
+		System.out.println("Delivered a packet!");
         /*
         1. Find the router s which has an interface
                 such that the interface and source end device have same network address.

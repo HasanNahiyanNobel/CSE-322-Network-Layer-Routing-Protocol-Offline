@@ -12,10 +12,11 @@ public class Client {
 
 		for (int i=0; i<100; i++) {
 			String message = generateRandomString(10);
-			String specialMessage = generateRandomString(15);
+			String specialMessage = null;
 
 			if (i==20) {
 				//TODO: Implement the special case
+				specialMessage = "SHOW_ROUTE";
 			}
 
 			Packet packet = new Packet(message, specialMessage, endDevice.getIpAddress(), null);
