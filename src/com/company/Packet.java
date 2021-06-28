@@ -50,4 +50,12 @@ public class Packet implements Serializable {
 	public void setDestinationIP (IPAddress destinationIP) {
 		this.destinationIP = destinationIP;
 	}
+
+	public String toString () {
+		return "Message: " + message + "\n" +
+				"Special Message: " + specialMessage + "\n" +
+				"Source IP: " + sourceIP + "\n" +
+				"Destination IP: " + destinationIP + "\n" +
+				"Hop Count: " + hopCount;
+	}
 }

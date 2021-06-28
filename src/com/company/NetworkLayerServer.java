@@ -64,7 +64,7 @@ public class NetworkLayerServer {
 				Socket socket = serverSocket.accept();
 				System.out.println("Client #" + (clientCount + 1) + " attempted to connect");
 				EndDevice endDevice = getClientDeviceSetup();
-				clientCount++;
+				System.out.println("\t\tClient Count: " + (clientCount + 1));
 				endDevices.add(endDevice);
 				endDeviceMap.put(endDevice.getIpAddress(), endDevice);
 				new ServerThread(new NetworkUtility(socket), endDevice);

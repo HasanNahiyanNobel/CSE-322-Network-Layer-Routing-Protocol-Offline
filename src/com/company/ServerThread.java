@@ -1,15 +1,28 @@
 package com.company;
 
+import java.util.Random;
+
+import static com.company.NetworkLayerServer.endDevices;
+
 // Work needed
 public class ServerThread implements Runnable {
 	NetworkUtility networkUtility;
 	EndDevice endDevice;
+	EndDevice randomReceiver;
+	SenderAndReceiver senderAndReceiver;
 
 	ServerThread (NetworkUtility networkUtility, EndDevice endDevice) {
 		this.networkUtility = networkUtility;
 		this.endDevice = endDevice;
-		System.out.println("Server Ready for client " + NetworkLayerServer.clientCount);
+
+		int indexOfRandomReceiver = new Random().nextInt(endDevices.size()) - 1;
+		this.randomReceiver = endDevices.get(indexOfRandomReceiver);
+
+		this.senderAndReceiver = new SenderAndReceiver(endDevice.getIpAddress(), randomReceiver.getIpAddress());
+
 		NetworkLayerServer.clientCount++;
+		System.out.println("Server Ready for client " + NetworkLayerServer.clientCount);
+
 		new Thread(this).start();
 	}
 
@@ -24,7 +37,7 @@ public class ServerThread implements Runnable {
 	        2. If the packet contains "SHOW_ROUTE" request, then fetch the required information and send back to client
 	        3. Either send acknowledgement with number of hops or send failure message back to client
         */
-		networkUtility.write(endDevice);
+		networkUtility.write(senderAndReceiver);
 	}
 
 
