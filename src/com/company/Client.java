@@ -5,24 +5,27 @@ import java.util.Random;
 //Work needed
 public class Client {
 	public static void main (String[] args) throws InterruptedException {
+		final int NUMBER_OF_PACKETS_TO_BE_SENT = 100;
+
 		NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
 		System.out.println("Connected to server");
 
 		EndDevice endDevice = (EndDevice) networkUtility.read();
 
-		for (int i=0; i<100; i++) {
+		for (int i=0; i<NUMBER_OF_PACKETS_TO_BE_SENT; i++) {
 			String message = generateRandomString(10);
-			String specialMessage = null;
+			String specialMessage;
 
-			if (i==20) {
-				//TODO: Implement the special case
-				specialMessage = "SHOW_ROUTE";
-			}
+			if (i==20) specialMessage = "SHOW_ROUTE";
+			else specialMessage = null;
 
 			Packet packet = new Packet(message, specialMessage, endDevice.getIpAddress(), null);
 			System.out.println("Writing packet.");
 			networkUtility.write(packet);
+			Thread.sleep(100);
 		}
+
+		System.out.println("Delivered " + NUMBER_OF_PACKETS_TO_BE_SENT + " packets to server.");
 
 		while (true) {}
         
