@@ -23,6 +23,8 @@ public class Client {
 			System.out.println("Writing packet.");
 			networkUtility.write(packet);
 		}
+
+		while (true) {}
         
         /*
         Tasks:

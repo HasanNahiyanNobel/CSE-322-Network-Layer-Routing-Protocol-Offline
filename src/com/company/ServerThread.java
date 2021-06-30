@@ -27,8 +27,10 @@ public class ServerThread implements Runnable {
 	        2. If the packet contains "SHOW_ROUTE" request, then fetch the required information and send back to client
 	        3. Either send acknowledgement with number of hops or send failure message back to client
         */
-		Packet packet = (Packet) networkUtility.read();
-		deliverPacket(packet);
+		while (networkUtility.getSocket().isConnected()) {
+			Packet packet = (Packet) networkUtility.read();
+			if (packet!=null) deliverPacket(packet);
+		}
 	}
 
 
