@@ -1,5 +1,9 @@
 package com.company;
 
+import java.util.Random;
+
+import static com.company.NetworkLayerServer.endDevices;
+
 // Work needed
 public class ServerThread implements Runnable {
 	NetworkUtility networkUtility;
@@ -28,14 +32,21 @@ public class ServerThread implements Runnable {
 	        3. Either send acknowledgement with number of hops or send failure message back to client
         */
 		while (networkUtility.getSocket().isConnected()) {
+			// Read the packet
 			Packet packet = (Packet) networkUtility.read();
-			if (packet!=null) deliverPacket(packet);
+
+			// Assign a random receiver
+			int indexOfRandomReceiver = new Random().nextInt(endDevices.size());
+			EndDevice randomReceiver = endDevices.get(indexOfRandomReceiver);
+			packet.setDestinationIP(randomReceiver.getIpAddress());
+
+			// Deliver the packet
+			deliverPacket(packet);
 		}
 	}
 
 
 	public Boolean deliverPacket (Packet packet) {
-		System.out.println("Delivered a packet!");
         /*
         1. Find the router s which has an interface
                 such that the interface and source end device have same network address.
