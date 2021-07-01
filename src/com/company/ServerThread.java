@@ -1,9 +1,11 @@
 package com.company;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
-import static com.company.NetworkLayerServer.endDevices;
-import static com.company.NetworkLayerServer.routers;
+import static com.company.NetworkLayerServer.*;
 
 // Work needed
 public class ServerThread implements Runnable {
@@ -48,8 +50,10 @@ public class ServerThread implements Runnable {
 
 
 	public Boolean deliverPacket (Packet packet) {
-		String sourceNetworkAddress = packet.getSourceIP().getNetworkAddress();
-		String destinationNetworkAddress = packet.getDestinationIP().getNetworkAddress();
+		IPAddress sourceIP = packet.getSourceIP();
+		IPAddress destinationIP = packet.getDestinationIP();
+		String sourceNetworkAddress = sourceIP.getNetworkAddress();
+		String destinationNetworkAddress = destinationIP.getNetworkAddress();
 
 		Router sourceRouter = null;
 		Router destinationRouter = null;
@@ -63,9 +67,28 @@ public class ServerThread implements Runnable {
 
 		if (sourceRouter==null || destinationRouter==null) {
 			System.out.println("Some terrible error occurred in ServerThread.");
+			return false;
 		}
 
-		System.out.println(sourceRouter.getRouterId() + "----" + destinationRouter.getRouterId());
+		IPAddress gateWayIP = sourceRouter.getGatewayIDtoIP().get(destinationIP);
+		int gateWayRouterID = interfaceToRouterID.get(gateWayIP);
+		Router gateWayRouter = routers.get(gateWayRouterID);
+		RoutingPath routingPath = new RoutingPath(gateWayRouterID);
+
+		while (!gateWayIP.getNetworkAddress().equals(destinationIP.getNetworkAddress())) {
+			gateWayIP = gateWayRouter.getGatewayIDtoIP().get(destinationIP);
+			gateWayRouterID = interfaceToRouterID.get(gateWayIP);
+			gateWayRouter = routers.get(gateWayRouterID);
+			routingPath.addRouter(gateWayRouterID);
+		}
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter("TempDeliverPacketLog.txt"));
+			bw.write(routingPath.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
         /*
         1. Find the router s which has an interface
