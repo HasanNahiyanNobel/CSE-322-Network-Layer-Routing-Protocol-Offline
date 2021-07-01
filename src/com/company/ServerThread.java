@@ -38,6 +38,9 @@ public class ServerThread implements Runnable {
 			// Read the packet
 			Packet packet = (Packet) networkUtility.read();
 
+			// Check if the packet is null
+			if (packet==null) continue;
+
 			// Assign a random receiver
 			int indexOfRandomReceiver = new Random().nextInt(endDevices.size());
 			EndDevice randomReceiver = endDevices.get(indexOfRandomReceiver);
@@ -46,6 +49,8 @@ public class ServerThread implements Runnable {
 			// Deliver the packet
 			deliverPacket(packet);
 		}
+
+		System.out.println("Connection closed with endDevice #" + endDevice.getDeviceID());
 	}
 
 
@@ -70,21 +75,26 @@ public class ServerThread implements Runnable {
 			return false;
 		}
 
-		IPAddress gateWayIP = sourceRouter.getGatewayIDtoIP().get(destinationIP);
-		int gateWayRouterID = interfaceToRouterID.get(gateWayIP);
-		Router gateWayRouter = routers.get(gateWayRouterID);
-		RoutingPath routingPath = new RoutingPath(gateWayRouterID);
+		int sourceRouterID = sourceRouter.getRouterId();
+		int destinationRouterID = destinationRouter.getRouterId();
 
-		while (!gateWayIP.getNetworkAddress().equals(destinationIP.getNetworkAddress())) {
-			gateWayIP = gateWayRouter.getGatewayIDtoIP().get(destinationIP);
-			gateWayRouterID = interfaceToRouterID.get(gateWayIP);
-			gateWayRouter = routers.get(gateWayRouterID);
-			routingPath.addRouter(gateWayRouterID);
+		RoutingPath routingPath = new RoutingPath(sourceRouterID);
+
+		int currentRouterID = sourceRouterID;
+
+		while (currentRouterID!=destinationRouterID) {
+			Router currentRouter = routers.get(currentRouterID);
+			IPAddress gatewayIP = currentRouter.getGatewayIDtoIP().get(destinationIP);
+			int gatewayRouterID = interfaceToRouterID.get(gatewayIP);
+
+			routingPath.addRouter(gatewayRouterID);
+
+			currentRouterID = gatewayRouterID;
 		}
 
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter("TempDeliverPacketLog.txt"));
-			bw.write(routingPath.toString());
+			BufferedWriter bw = new BufferedWriter(new FileWriter("TempDeliverPacketLog.txt",true));
+			bw.write(routingPath.toString() + '\n');
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
