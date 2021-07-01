@@ -3,6 +3,7 @@ package com.company;
 import java.util.Random;
 
 import static com.company.NetworkLayerServer.endDevices;
+import static com.company.NetworkLayerServer.routers;
 
 // Work needed
 public class ServerThread implements Runnable {
@@ -47,6 +48,25 @@ public class ServerThread implements Runnable {
 
 
 	public Boolean deliverPacket (Packet packet) {
+		String sourceNetworkAddress = packet.getSourceIP().getNetworkAddress();
+		String destinationNetworkAddress = packet.getDestinationIP().getNetworkAddress();
+
+		Router sourceRouter = null;
+		Router destinationRouter = null;
+
+		for (Router router : routers) {
+			for (IPAddress ipAddress : router.getInterfaceAddresses()) {
+				if (ipAddress.getNetworkAddress().equals(sourceNetworkAddress)) sourceRouter = router;
+				if (ipAddress.getNetworkAddress().equals(destinationNetworkAddress)) destinationRouter = router;
+			}
+		}
+
+		if (sourceRouter==null || destinationRouter==null) {
+			System.out.println("Some terrible error occurred in ServerThread.");
+		}
+
+		System.out.println(sourceRouter.getRouterId() + "----" + destinationRouter.getRouterId());
+
         /*
         1. Find the router s which has an interface
                 such that the interface and source end device have same network address.
