@@ -6,9 +6,9 @@ import java.io.Serializable;
 public class Packet implements Serializable {
 
 	private String message;
-	private String specialMessage;  //ex: "SHOW_ROUTE" request
-	private IPAddress destinationIP;
+	private String specialMessage; //ex: "SHOW_ROUTE" request
 	private IPAddress sourceIP;
+	private IPAddress destinationIP;
 	int hopCount;
 
 	public Packet (String message, String specialMessage, IPAddress sourceIP, IPAddress destinationIP) {
@@ -49,5 +49,14 @@ public class Packet implements Serializable {
 
 	public void setDestinationIP (IPAddress destinationIP) {
 		this.destinationIP = destinationIP;
+	}
+
+	@Override
+	public String toString () {
+		return "{message: " + message +
+				", specialMessage: " + specialMessage +
+				", sourceIP: " + sourceIP +
+				", destinationIP: " + destinationIP +
+				", hopCount: " + hopCount + "}";
 	}
 }
