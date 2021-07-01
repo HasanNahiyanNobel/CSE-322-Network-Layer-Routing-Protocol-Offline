@@ -57,7 +57,7 @@ public class NetworkLayerServer {
 		DVR(4); // Update routing table using distance vector routing until convergence
 		//simpleDVR(4);
 
-		stateChanger = new RouterStateChanger(); // Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
+		//stateChanger = new RouterStateChanger(); // Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA // TODO: Turn on this stateChanger.
 
 		while(true) {
 			try {
@@ -81,9 +81,6 @@ public class NetworkLayerServer {
 	}
 
 	public static synchronized void DVR (int startingRouterId) {
-		/**
-		 * pseudocode
-		 */
         /*
         while(convergence) {
             //convergence means no change in any routingTable before and after executing the following for loop
@@ -98,7 +95,7 @@ public class NetworkLayerServer {
 
 		int totalNumberOfIterationsInDVR = 0;
 
-		System.out.println("DVR started from router #" + startingRouterId); // TODO: Remove this debug line
+		if (DEBUG_DVR_MODE) System.out.println("DVR started from router #" + startingRouterId);
 		while (true) {
 			if (DEBUG_DVR_MODE) appendStringToFile("Starting DVR loop #" + (totalNumberOfDVRs+1) + "." + (totalNumberOfIterationsInDVR+1) + "------------------------------------------------------------------------\n", DVR_LOOP_LOG_PATH);
 			boolean atLeastOneUpdateOccurred = false;
@@ -133,7 +130,7 @@ public class NetworkLayerServer {
 			totalNumberOfIterationsInDVR++;
 			if (!atLeastOneUpdateOccurred) break;
 		}
-		System.out.println("DVR ended from router #" + startingRouterId + ", after loop(s) #" + totalNumberOfIterationsInDVR); // TODO: Remove this debug line
+		if (DEBUG_DVR_MODE) System.out.println("DVR ended from router #" + startingRouterId + ", after loop(s) #" + totalNumberOfIterationsInDVR);
 		printRoutersToFile("RoutingTablesAfterLastDVR.txt");
 		totalNumberOfDVRs++;
 	}
