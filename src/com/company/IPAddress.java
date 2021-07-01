@@ -26,11 +26,25 @@ public class IPAddress implements Serializable {
 
 	public String getNetworkAddress () {
 		StringBuilder stringBuilder = new StringBuilder();
-		for (int i=0; i<3; i++) {
-			stringBuilder.append(bytes[i].toString());
-			stringBuilder.append(".");
+		int firstOctet = Integer.parseInt(bytes[0].toString());
+
+		if (firstOctet < 127) {
+			// Class A
+			stringBuilder.append(bytes[0]).append(".0.0.0");
 		}
-		stringBuilder.append("0");
+		else if (firstOctet < 192) {
+			// Class B
+			stringBuilder.append(bytes[0]).append(".").append(bytes[1]).append(".0.0");
+		}
+		else if (firstOctet < 224) {
+			// Class C
+			stringBuilder.append(bytes[0]).append(".").append(bytes[1]).append(".").append(bytes[2]).append(".0");
+		}
+		else {
+			// Class D or E
+			System.out.println("Some terrible error occurred in class IPAddress.");
+		}
+
 		return stringBuilder.toString();
 	}
 
