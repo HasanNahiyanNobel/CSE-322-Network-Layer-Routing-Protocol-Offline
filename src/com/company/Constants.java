@@ -11,6 +11,6 @@ public interface Constants {
 	/**
 	 * If {@code true}, debug lines will be printed to {@link Constants#DVR_LOOP_LOG_PATH}.
 	 */
-	boolean DEBUG_DVR_MODE = true;
+	boolean DEBUG_DVR_MODE = false;
 	String DVR_LOOP_LOG_PATH = "LogOfDVRLoop.txt";
 }

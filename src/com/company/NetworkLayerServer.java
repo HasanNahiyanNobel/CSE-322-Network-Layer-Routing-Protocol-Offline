@@ -278,9 +278,7 @@ public class NetworkLayerServer {
 					interfaceAddresses.add(ipAddress);
 					interfaceToRouterID.put(ipAddress, routerId);
 
-					/**
-					 * First interface is always client interface
-					 */
+					//First interface is always client interface
 					if(i == 0) {
 						//client interface is not connected to any end device yet
 						clientInterfaces.put(ipAddress, 0);

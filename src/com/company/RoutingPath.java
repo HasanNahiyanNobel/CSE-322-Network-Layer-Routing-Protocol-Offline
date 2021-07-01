@@ -24,4 +24,15 @@ public class RoutingPath {
 	public int getHopCount () {
 		return routerIDs.size()-1;
 	}
+
+	public void addRouter (int routerID) {
+		routerIDs.add(routerID);
+	}
+
+	@Override
+	public String toString () {
+		return "RoutingPath{" +
+				"routerIDs=" + routerIDs +
+				'}';
+	}
 }
