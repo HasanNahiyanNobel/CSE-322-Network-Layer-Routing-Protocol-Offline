@@ -6,6 +6,7 @@ import java.util.Random;
 public class Client {
 	public static void main (String[] args) throws InterruptedException {
 		final int NUMBER_OF_PACKETS_TO_BE_SENT = 100;
+		final int WAIT_TIME_BETWEEN_SENDING_PACKETS = 10; // In milliseconds.
 
 		NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
 		System.out.println("Connected to server");
@@ -22,7 +23,7 @@ public class Client {
 			Packet packet = new Packet(message, specialMessage, endDevice.getIpAddress(), null);
 			System.out.println("Writing packet.");
 			networkUtility.write(packet);
-			Thread.sleep(100);
+			Thread.sleep(WAIT_TIME_BETWEEN_SENDING_PACKETS);
 		}
 
 		System.out.println("Delivered " + NUMBER_OF_PACKETS_TO_BE_SENT + " packets to server.");

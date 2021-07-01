@@ -3,11 +3,9 @@ package com.company;
 import java.util.ArrayList;
 
 public class RoutingPath {
-	ArrayList<Integer> routerIDs;
+	ArrayList<Integer> routerIDs = new ArrayList<>();
 
-	RoutingPath () {
-		routerIDs = null;
-	}
+	RoutingPath () {}
 
 	RoutingPath (int routerID) {
 		routerIDs.add(routerID);
