@@ -87,11 +87,6 @@ public class ServerThread implements Runnable {
 		while (currentRouterID!=destinationRouterID) {
 			Router currentRouter = routers.get(currentRouterID-1);
 			IPAddress gatewayIP = currentRouter.getGatewayIDtoIP().get(destinationIP);
-			// TODO: Remove this debug stuff.
-				if (interfaceToRouterID.get(gatewayIP)==null) {
-					System.out.println(gatewayIP);
-					continue;
-				}
 			int gatewayRouterID = interfaceToRouterID.get(gatewayIP);
 
 			routingPath.addRouter(gatewayRouterID);
