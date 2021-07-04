@@ -9,8 +9,12 @@ public interface Constants {
 	 */
 	double EPSILON = 0.01;
 	/**
-	 * If {@code true}, debug lines will be printed to {@link Constants#DVR_LOOP_LOG_PATH}.
+	 * If {@code true}, some debug lines will be printed to {@link Constants#DVR_LOOP_LOG_PATH} and console.
 	 */
 	boolean DEBUG_DVR_MODE = false;
+	/**
+	 * If {@code true}, some debug lines will be printed to console.
+	 */
+	boolean DEBUG_ROUTING_PATH_MODE = true; // TODO: Make this false.
 	String DVR_LOOP_LOG_PATH = "LogOfDVRLoop.txt";
 }
