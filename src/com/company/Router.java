@@ -112,7 +112,6 @@ public class Router {
 		/*for (int i=0; i<routingTable.size(); i++) {
 			routingTable.set(i, null);
 		}*/
-		System.out.println("Going to start DVR from router #" + this.routerId); // TODO: Remove this debug line
 		DVR(this.routerId);
 	}
 
