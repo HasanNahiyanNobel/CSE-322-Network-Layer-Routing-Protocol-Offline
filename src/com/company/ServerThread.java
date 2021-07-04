@@ -99,18 +99,6 @@ public class ServerThread implements Runnable {
 			currentRouter = nextRouter;
 		}
 
-		/*int currentRouterID = sourceRouterID;
-
-		while (currentRouterID!=destinationRouterID) {
-			Router currentRouter = routers.get(currentRouterID-1);
-			IPAddress gatewayIP = currentRouter.getGatewayIDtoIP().get(destinationIP);
-			int gatewayRouterID = interfaceToRouterID.get(gatewayIP);
-
-			routingPath.addRouter(gatewayRouterID);
-
-			currentRouterID = gatewayRouterID;
-		}*/
-
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter("TempDeliverPacketLog.txt",true));
 			bw.write(routingPath.toString() + '\n');
