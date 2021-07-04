@@ -105,12 +105,14 @@ public class ServerThread implements Runnable {
 			currentRouter = nextRouter;
 		}
 
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter("TempDeliverPacketLog.txt",true));
-			bw.write(routingPath.toString() + '\n');
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (DEBUG_ROUTING_PATH_MODE) {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter("TempDeliverPacketLog.txt", true));
+				bw.write(routingPath.toString() + '\n');
+				bw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
         /*

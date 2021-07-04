@@ -15,6 +15,6 @@ public interface Constants {
 	/**
 	 * If {@code true}, some debug lines will be printed to console.
 	 */
-	boolean DEBUG_ROUTING_PATH_MODE = true; // TODO: Make this false.
+	boolean DEBUG_ROUTING_PATH_MODE = false;
 	String DVR_LOOP_LOG_PATH = "LogOfDVRLoop.txt";
 }
