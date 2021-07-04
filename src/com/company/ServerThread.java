@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.company.Constants.DEBUG_ROUTING_PATH_MODE;
 import static com.company.NetworkLayerServer.endDevices;
 import static com.company.NetworkLayerServer.routers;
 
@@ -80,19 +81,24 @@ public class ServerThread implements Runnable {
 		int sourceRouterID = sourceRouter.getRouterId();
 		int destinationRouterID = destinationRouter.getRouterId();
 
-		System.out.println("(Source, Destination) = (" + sourceRouterID + ", " + destinationRouterID + ")"); // TODO: Remove this debug line.
+		if (DEBUG_ROUTING_PATH_MODE) System.out.println("(Source, Destination) = (" + sourceRouterID + ", " + destinationRouterID + ")");
 
 		RoutingPath routingPath = new RoutingPath(sourceRouterID);
 
 		for (Router currentRouter = sourceRouter; currentRouter.getRouterId()!=destinationRouterID; ) {
 			ArrayList<RoutingTableEntry> currentRoutingTable = currentRouter.getRoutingTable();
-			int nextRouterID = currentRoutingTable.get(destinationRouterID-1).getRouterId();
+			int nextRouterID = currentRoutingTable.get(destinationRouterID-1).getGatewayRouterId();
+
+			if (nextRouterID==-1) {
+				if (DEBUG_ROUTING_PATH_MODE) System.out.println("Router #" + destinationRouterID + " is unreachable from router #" + sourceRouterID + ", dropping packet.");
+				return false;
+			}
+
 			Router nextRouter = routers.get(nextRouterID-1);
 
 			if (!nextRouter.getIsStateUp()) {
-				// TODO: Implement the case when the router is down.
-				System.out.println("Router #" + nextRouterID + " is down, dropping packet.");
-				break;
+				if (DEBUG_ROUTING_PATH_MODE) System.out.println("Router #" + nextRouterID + " is down, dropping packet.");
+				return false;
 			}
 
 			routingPath.addRouter(nextRouterID);
@@ -133,7 +139,7 @@ public class ServerThread implements Runnable {
         4. If 3(a) occurs at any stage, packet will be dropped,
             otherwise successfully sent to the destination router
         */
-		return false;
+		return true;
 	}
 
 	@Override
