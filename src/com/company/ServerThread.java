@@ -3,9 +3,11 @@ package com.company;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
-import static com.company.NetworkLayerServer.*;
+import static com.company.NetworkLayerServer.endDevices;
+import static com.company.NetworkLayerServer.routers;
 
 // Work needed
 public class ServerThread implements Runnable {
@@ -82,7 +84,22 @@ public class ServerThread implements Runnable {
 
 		RoutingPath routingPath = new RoutingPath(sourceRouterID);
 
-		int currentRouterID = sourceRouterID;
+		for (Router currentRouter = sourceRouter; currentRouter.getRouterId()!=destinationRouterID; ) {
+			ArrayList<RoutingTableEntry> currentRoutingTable = currentRouter.getRoutingTable();
+			int nextRouterID = currentRoutingTable.get(destinationRouterID-1).getRouterId();
+			Router nextRouter = routers.get(nextRouterID-1);
+
+			if (!nextRouter.getIsStateUp()) {
+				// TODO: Implement the case when the router is down.
+				System.out.println("Router #" + nextRouterID + " is down, dropping packet.");
+				break;
+			}
+
+			routingPath.addRouter(nextRouterID);
+			currentRouter = nextRouter;
+		}
+
+		/*int currentRouterID = sourceRouterID;
 
 		while (currentRouterID!=destinationRouterID) {
 			Router currentRouter = routers.get(currentRouterID-1);
@@ -92,7 +109,7 @@ public class ServerThread implements Runnable {
 			routingPath.addRouter(gatewayRouterID);
 
 			currentRouterID = gatewayRouterID;
-		}
+		}*/
 
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter("TempDeliverPacketLog.txt",true));
